@@ -13,23 +13,27 @@ import lib.writeexcel
 
 pp = pprint.PrettyPrinter(width=1)
 logger = logging.getLogger(__name__)
+print('name', __name__)
 
 # shorten so don't have to pass lib.config.config all over this module
 hash_global = lib.settings.hash_global
 config = lib.settings.config
+
 
 def GetRealty():
 
     # import pdb; pdb.set_trace()  # XXX BREAKPOINT
 
     print("fix the slow page read time that uses BeautifulSoup")
-    print("xlsx file is not writing all the columns.  Look at Reduced and appraised columns")
+    print("xlsx file is not writing all the columns.  Look \
+          at Reduced and appraised columns")
     # previous to this routine:
     #   args have been parsed from command line / gui
     #   Defaults read from config.yaml file
 
     # the main program
-    # calls to build build sqlite db, create tables, update and modify table columns
+    # calls to build build sqlite db, create tables, update and modify table
+    #   columns
     # determine properties in the caches
     # determine properties in the sqlite db
     # determine properies that meet query needs
@@ -38,14 +42,17 @@ def GetRealty():
     # calculate additional info for each rnumber
     # write the output to XLSX file
 
+    lib.mydirs.MyDirs().buildmydirs()
+
     # build the SQL table is it doesn't already exist
     lib.sqlConnect.buildTableIfDoesntExist()
 
     lib.sqlConnect.UpdateDBColumns()
 
-	# check that there are no duplicate rnumbers specified with -rnumbers
+    # check that there are no duplicate rnumbers specified with -rnumbers
     if config['defaults']['RNUMBERS'] is not False:
-        checkDuplicateRnumbers()
+        if checkDuplicateRnumbers():
+            exit()
 
     # build hash that contains all rnumbers that are cached on filesystem
     buildCacheDict()
@@ -53,22 +60,24 @@ def GetRealty():
     # get the rnumbers to for building XLSX page
     #   determined by reading config[defaults][RNUMBERS] or from search query
     #   command line options
-    (rnumbers,rnumPropIDArray) = getRnumbers()
+    (rnumbers, rnumPropIDArray) = getRnumbers()
 
-    checkIfRnumbersInDb(rnumbers)  # builds hash_global['cache']['db'][rnumber] dict value is 1 or 0
+    # builds hash_global['cache']['db'][rnumber] dict value is 1 or 0
+    checkIfRnumbersInDb(rnumbers)
 
-    # -db_serach option tells the program to ONLY read get data from the database
-    if config['defaults']['DB_SEARCH'] == False:
-        writeDbWithCacheOrServerData(rnumbers,rnumPropIDArray)
+    # -db_serach option tells program to ONLY read get data from the database
+    if config['defaults']['DB_SEARCH'] is False:
+        writeDbWithCacheOrServerData(rnumbers, rnumPropIDArray)
 
-	# during regression, print the values for the rnumbers to a hash.
-	# These values are grepped by the regression script to the result file
+        # during regression, print the values for the rnumbers to a hash.
+        # These values are grepped by the regression script to the result file
     if config['defaults']['REGRESS'] is True:
         saveRegressionData()
 
     # write the selected rnumbers to XLSX file
     lib.writeexcel.writeExcel(rnumbers)
     logger.info(hash_global)
+
 
 def buildCacheDict():
 
@@ -77,14 +86,16 @@ def buildCacheDict():
     dirlist = os.listdir(cache_dir)
 
     for mydir in dirlist:
-        hash_global['cache'].update({mydir:1})
-        hash_global['propValues'].update({mydir:'-100'})
+        hash_global['cache'].update({mydir: 1})
+        hash_global['propValues'].update({mydir: '-100'})
+
 
 def saveRegressionData():
 
     fh_regress = open('test.regress', "w")
 
-    sql_where = lib.sqlConnect.getSearchSqlDbWhereCommand(config['defaults']['REGRESS_GET_COLUMNS'])
+    sql_where = lib.sqlConnect.getSearchSqlDbWhereCommand(
+        config['defaults']['REGRESS_GET_COLUMNS'])
     logger.info("sql_where = %s", sql_where)
 
     my_values = lib.sqlConnect.sqlQueryRequest(sql_where)
@@ -93,12 +104,13 @@ def saveRegressionData():
         fh_regress.write(str(value))
         fh_regress.write("\n")
 
-def writeDbWithCacheOrServerData(rnumbers,rnumPropIDArray):
+
+def writeDbWithCacheOrServerData(rnumbers, rnumPropIDArray):
 
     # check if rnumbers are in the cache
     # build the hash_global['rnums'] dict
-    #   hash_global['rnums'] contians 'omit' key that determines if rnumber data gets
-    #   pulled from the server
+    # hash_global['rnums'] contians 'omit' key. determines if rnumber data gets
+    # pulled from the server
     checkIfRnumbersInCache(rnumbers)
     count = 1
     carriage_return = 1
@@ -119,49 +131,66 @@ def writeDbWithCacheOrServerData(rnumbers,rnumPropIDArray):
         if not os.path.exists(cache_dir_new):
             os.makedirs(cache_dir_new)
 
-# 			my $pr = "$rnumber ";
-
-        # if Not in the cache or requested to update from server, go and get the data from the server
-        if (rnumber not in hash_global['cache'] or config['defaults']['UPDATE_DB_FROM_SERVER'] == True):
+        # if Not in the cache or requested to update from server, go and get
+        # the data from the server
+        if (rnumber not in hash_global['cache']
+                or config['defaults']['UPDATE_DB_FROM_SERVER'] is True):
             getDataFromServers(rnumber, my_property)
 
         # if rnumber in database and not requesting update from cache or
         # server, log rnumber as found in db and don't need to parse cache data
         # files
-        if (hash_global['db'][rnumber] == 1 and \
-            config['defaults']['UPDATE_DB_FROM_CACHE'] == False and \
-            config['defaults']['UPDATE_DB_FROM_SERVER'] == False):
-            # if rnumber in db, and not -update_db_from_server or -update_db_from_cache
-            #    have database entry - Don't need to ping the server or calculate from the cache
+        if (hash_global['db'][rnumber] == 1 and
+            config['defaults']['UPDATE_DB_FROM_CACHE'] is False and
+                config['defaults']['UPDATE_DB_FROM_SERVER'] is False):
+            # if rnumber in db, and not -update_db_from_server or
+            # -update_db_from_cache have database entry - Don't need to
+            # ping the server or calculate from the cache
             logger.info("In the Database {}!".format(rnumber))
         else:
             # CREATE A DATABASE ENTRY
-            # If during a read of the files, good return value is 0. the file is corrupt
-            good_detail = lib.webdata.readResponseData('Details',rnumber, config['defaults_static']['PROP_DETAIL_RESULTS'])
-            good_bills  = lib.webdata.readResponseData('Bills',  rnumber, config['defaults_static']['BILL_PAGE_RESULTS'])
-            good_hist   = lib.webdata.readResponseData('History',rnumber, config['defaults_static']['HISTORY_PAGE_RESULTS'])
-            good_data   = lib.webdata.readResponseData('Data',   rnumber, config['defaults_static']['DATASHEET_PAGE'])
+            # If during a read of the files, good return value is 0. the file
+            # is corrupt
+            good_detail = lib.webdata.readResponseData(
+                'Details', rnumber,
+                config['defaults_static']['PROP_DETAIL_RESULTS'])
+            good_bills = lib.webdata.readResponseData(
+                'Bills', rnumber,
+                config['defaults_static']['BILL_PAGE_RESULTS'])
+            good_hist = lib.webdata.readResponseData(
+                'History', rnumber,
+                config['defaults_static']['HISTORY_PAGE_RESULTS'])
+            good_data = lib.webdata.readResponseData(
+                'Data', rnumber,
+                config['defaults_static']['DATASHEET_PAGE'])
 
             print("good_hist", good_hist)
 #
 # 				unless ($good_detail && $good_bills && $good_hist && $good_data) {
 #
-# 					$logger->error("ERROR: good_detail=$good_detail && good_bills=$good_bills && good_hist=$good_hist && good_data=$good_data");
+# 					$logger->error("ERROR: good_detail=$good_detail
+#                   && good_bills=$good_bills && good_hist=$good_hist
+#                   && good_data=$good_data");
 #
-# 					$hash_bad_props->{$rnumber}->{good_detail} = $good_detail if ($good_detail eq 0);
-# 					$hash_bad_props->{$rnumber}->{good_bills}  = $good_bills  if ($good_bills  eq 0);;
-# 					$hash_bad_props->{$rnumber}->{good_hist}   = $good_hist   if ($good_hist   eq 0);;
-# 					$hash_bad_props->{$rnumber}->{good_data}   = $good_data   if ($good_data   eq 0);;
+# 					$hash_bad_props->{$rnumber}->{good_detail} = $good_detail
+#                      if ($good_detail eq 0);
+# 					$hash_bad_props->{$rnumber}->{good_bills}  = $good_bills
+#                      if ($good_bills  eq 0);;
+# 					$hash_bad_props->{$rnumber}->{good_hist}   = $good_hist
+#                      if ($good_hist   eq 0);;
+# 					$hash_bad_props->{$rnumber}->{good_data}   = $good_data
+#                      if ($good_data   eq 0);;
 # 					next PROP;
 
             # Create additional calculations, to add to the database. These are
             # values that have been found useful to the user, but not available
             # as raw numbers in the data files
-            lib.createAdditionalInfo.createAdditionalInformation(rnumber, "calcs")
+            lib.createAdditionalInfo.createAdditionalInformation(
+                rnumber, "calcs")
 
             # write the rnumber to the database, or update and existing rnumber
             # entry in the database
-            writeOrUpdateDb(rnumber) # Write the DB
+            writeOrUpdateDb(rnumber)  # Write the DB
 
 # 			if ($carriage_return eq 18) {
 # 				$carriage_return = 0;
@@ -172,67 +201,70 @@ def writeDbWithCacheOrServerData(rnumbers,rnumPropIDArray):
 # 			$logger->info($pr);
 # 			$carriage_return++;
 
-def getDataFromServers(rnumber, my_property):
 
-# 				# if williamson county...  have to do advanced search with cad site to get the properties.
-# 				# Then go get the information from the tax site.
-# 				# The propID and PropOwnerID numbers don't match between cad and tax sites.
-# 				# Have to go get from individual prop search
-# 				if ($COUNTY eq "Williamson") {
-# 					getPropIDSearchResult($rnumber);
-# 					my $response_file = $PROP_ID_SEARCH_RESPONSE_FILE_UNZIPPED;
-# 					my @properties_temp;
-# 					($hash_global['rnums']_values,@properties_temp) =
-# 					getRnumbersFromAdvancedSearchResponse($rnumber,$hash_global['rnums']_values,$response_file,@properties_temp);
-#
-# 					# Will be only one property [0]
-# 					$property = $properties_temp[0];
-#
+def getDataFromServers(rnumber, my_property):
 
     # get data pages from the server if cached entry doesn't exist or
     # -update_db_from_server
-    # will still omit rnumbers that fall out of requested criteria (min / max values)
+    # will still omit rnumbers that fall out of requested criteria (min / max
+    # values)
     do_update = 0
-    if config['defaults']['UPDATE_DB_FROM_SERVER'] == True:
+    if config['defaults']['UPDATE_DB_FROM_SERVER'] is True:
         do_update = 1
 
-    if (do_update == 1 or hash_global['rnums'][rnumber][ config['defaults_static']['HISTORY_PAGE_RESULTS'] ] == 0):
-        lib.webdata.getPost("History", my_property, config['defaults_static']['HISTORY_PAGE_RESULTS'])
+    if (do_update == 1 or hash_global['rnums'][rnumber]
+            [config['defaults_static']['HISTORY_PAGE_RESULTS']] == 0):
+        lib.webdata.getPost("History", my_property,
+                            config['defaults_static']
+                            ['HISTORY_PAGE_RESULTS'])
 
-    if (do_update == 1 or hash_global['rnums'][rnumber][ config['defaults_static']['PROP_DETAIL_RESULTS'] ] == 0):
-        lib.webdata.getPost("Details", my_property, config['defaults_static']['PROP_DETAIL_RESULTS'])
+    if (do_update == 1 or hash_global['rnums'][rnumber]
+            [config['defaults_static']['PROP_DETAIL_RESULTS']] == 0):
+        lib.webdata.getPost(
+            "Details", my_property,
+            config['defaults_static']['PROP_DETAIL_RESULTS'])
 
-    if (do_update == 1 or hash_global['rnums'][rnumber][ config['defaults_static']['BILL_PAGE_RESULTS'] ] == 0):
-        lib.webdata.getPost("Bills", my_property, config['defaults_static']['BILL_PAGE_RESULTS'])
+    if (do_update == 1 or hash_global['rnums'][rnumber]
+            [config['defaults_static']['BILL_PAGE_RESULTS']] == 0):
+        lib.webdata.getPost(
+            "Bills", my_property,
+            config['defaults_static']['BILL_PAGE_RESULTS'])
 
-    if (do_update == 1 or hash_global['rnums'][rnumber][ config['defaults_static']['DATASHEET_PAGE'] ] == 0):
-        lib.webdata.getPost("Data", my_property, config['defaults_static']['DATASHEET_PAGE'])
+    if (do_update == 1 or hash_global['rnums'][rnumber]
+            [config['defaults_static']['DATASHEET_PAGE']] == 0):
+        lib.webdata.getPost(
+            "Data",
+            my_property,
+            config['defaults_static']['DATASHEET_PAGE'])
+
 
 def getRnumbers():
-
-    # in this routine, we care about getting the list of rnumbers
+    ''' in this routine, we care about getting the list of rnumbers
+    This is accomplished via a -db_search or querying the server'''
     # print(globals())
     rnumbers = []
-    properties= []
+    properties = []
     # Get rnumbers from Db Search
-    if config['defaults']['DB_SEARCH'] == True:
+    if config['defaults']['DB_SEARCH'] is True:
         sql_where = lib.sqlConnect.getSearchSqlDbWhereCommand(False)
-        sql_results = lib.sqlConnect.sqlQueryRequest(sql_where);
+        sql_results = lib.sqlConnect.sqlQueryRequest(sql_where)
 
         rnumbers = [tup[0] for tup in sql_results]
     else:
 
-        if config['defaults']['USE_LAST_ADV_SEARCH'] is not True or config['defaults']['RNUMBERS'] is not False :
+        if config['defaults']['USE_LAST_ADV_SEARCH'] is not True \
+                or config['defaults']['RNUMBERS'] is not False:
             lib.webdata.getAdvancedSearchPageResponse()
 
         properties = lib.webdata.getRnumbersFromAdvSearchOrRnumberInput()
 
-		# get the desired Rnumbers only
+        # get the desired Rnumbers only
         for my_property in properties:
             rnumber = my_property[0]
             rnumbers.append(rnumber)
 
     return(rnumbers, properties)
+
 
 def checkIfRnumbersInCache(rnumbers):
 
@@ -257,19 +289,22 @@ def checkIfRnumbersInCache(rnumbers):
     # setup $hash_global['rnums']->{$rnumber}->{omit} value = 1 if omitted
     for rnumber in rnumbers:
 
-        num_queries = determineCacheEntriesHash(rnumber,num_queries,getRequestPages)
+        num_queries = determineCacheEntriesHash(
+            rnumber, num_queries, getRequestPages)
 
         if carriage_return is 8:
-# 				$logger->info();
+            # 				$logger->info();
             carriage_return = 0
         carriage_return += 1
 
-    numPropsNotOmmitted = getRnumsMeetingCriteria(num_rnumbers,rnumbers)
+    numPropsNotOmmitted = getRnumsMeetingCriteria(num_rnumbers, rnumbers)
 
     if config['defaults']['NO_QUERY_PING_SERVER'] is False:
-        questionUserIfWantToSubmit(num_rnumbers, numPropsNotOmmitted, num_queries)
+        questionUserIfWantToSubmit(
+            num_rnumbers, numPropsNotOmmitted, num_queries)
 
     logger.info("(1/%s)  ", numPropsNotOmmitted)
+
 
 def checkIfRnumbersInDb(rnumbers):
 
@@ -281,27 +316,34 @@ def checkIfRnumbersInDb(rnumbers):
     for RNUM in rnumbers:
 
         # initialize as 0 = npt in the db
-        hash_global['db'].update({RNUM:0})
+        hash_global['db'].update({RNUM: 0})
 
-        sql_command = "SELECT r_num FROM " + config['defaults']['TABLE_NAME'] + " WHERE r_num=\"" + RNUM + "\""
+        sql_command = "SELECT r_num FROM " + \
+            config['defaults']['TABLE_NAME'] + " WHERE r_num=\"" + RNUM + "\""
 
-        sql_results =lib.sqlConnect.sqlQueryRequest(sql_command)
+        sql_results = lib.sqlConnect.sqlQueryRequest(sql_command)
 
         values = [tup[0] for tup in sql_results]
 
         for row in values:
             # found in the database - set to 1
-            hash_global['db'].update({RNUM:1})
+            hash_global['db'].update({RNUM: 1})
 
-def questionUserIfWantToSubmit(num_rnumbers,num_rnumbers_non_ommitted,num_queries):
+
+def questionUserIfWantToSubmit(
+        num_rnumbers, num_rnumbers_non_ommitted, num_queries):
 
     logger.info("Number of R Numbers (total)          : %s", num_rnumbers)
-    logger.info("Number of R Numbers (not ommitted)   : %s", num_rnumbers_non_ommitted)
+    logger.info(
+        "Number of R Numbers (not ommitted)   : %s",
+        num_rnumbers_non_ommitted)
     logger.info("Number of Server Queries             : %s", num_queries)
 
     if (num_queries != 0):
 
-        logger.info("Do you want submit %s to the continue? [y/n] ", num_queries)
+        logger.info(
+            "Do you want submit %s to the continue? [y/n] ",
+            num_queries)
 #
 # 		while (<STDIN>) {
 # 			my $response = $_;
@@ -320,7 +362,8 @@ def questionUserIfWantToSubmit(num_rnumbers,num_rnumbers_non_ommitted,num_querie
 # 				$logger->warn("Do you want submit $num_queries to the continue? [y/n] ");
 # 				next;
 
-def getRnumsMeetingCriteria(num_rnumbers,rnumbers):
+
+def getRnumsMeetingCriteria(num_rnumbers, rnumbers):
 
     numPropsNotOmmitted = 0
 
@@ -329,16 +372,17 @@ def getRnumsMeetingCriteria(num_rnumbers,rnumbers):
             continue
         numPropsNotOmmitted += 1
 
-    logger.info("num_rnumbers = %s",num_rnumbers)
+    logger.info("num_rnumbers = %s", num_rnumbers)
     logger.info("num_rnum_non_ommitted = %s", numPropsNotOmmitted)
 
     return(numPropsNotOmmitted)
 
-def determineCacheEntriesHash(rnumber,num_queries,pages):
 
-    hash_global['rnums'].update({rnumber:{}})
+def determineCacheEntriesHash(rnumber, num_queries, pages):
 
-	# don't add to query if below or above desired value
+    hash_global['rnums'].update({rnumber: {}})
+
+    # don't add to query if below or above desired value
     value = int(hash_global['propValues'][rnumber])
 
     print_rnumber = '* {:<12}'.format(rnumber)
@@ -348,31 +392,45 @@ def determineCacheEntriesHash(rnumber,num_queries,pages):
 
     pr_warn = print_rnumber
 
-    if (config['defaults']['RNUMBERS'] is not "ALL") and (value <= def_min_value or value >= def_max_value):
+    if (config['defaults']['RNUMBERS'] is not "ALL") and (
+            value <= def_min_value or value >= def_max_value):
 
-		# if -f then force all properties to get run.
+            # if -f then force all properties to get run.
         if value >= def_min_value:
             if config['defaults']['FORCE']:
-                pr_warn = "FORCED ** Value " + str(value) + ">=" + str(def_max_value)
-                logger.info("FORCED Value %s %s",value, config['defaults']['MAX_VALUE'])
+                pr_warn = "FORCED ** Value " + str(
+                    value) + ">=" + str(def_max_value)
+                logger.info(
+                    "FORCED Value %s %s",
+                    value,
+                    config['defaults']['MAX_VALUE'])
             else:
                 for page in pages:
-                    hash_global['rnums'][rnumber].update({'omit':1})
-                logger.info("%sOmitted -  Value %s >= %s",print_rnumber,value, def_max_value)
+                    hash_global['rnums'][rnumber].update({'omit': 1})
+                logger.info(
+                    "%sOmitted -  Value %s >= %s",
+                    print_rnumber,
+                    value,
+                    def_max_value)
                 return(num_queries)
 
         if value <= def_min_value:
-			# if -f then force all properties to get run.
+                        # if -f then force all properties to get run.
             if config['defaults']['FORCE']:
-                pr_warn = "FORCED ** Value " + str(value) + "<=" + str(def_min_value)
+                pr_warn = "FORCED ** Value " + str(
+                    value) + "<=" + str(def_min_value)
                 pass
             else:
                 for page in pages:
-                    hash_global['rnums'][rnumber].update({'omit':1})
-                logger.info("%sOmitted -  Value %s <= %s",print_rnumber,value,def_min_value)
+                    hash_global['rnums'][rnumber].update({'omit': 1})
+                logger.info(
+                    "%sOmitted -  Value %s <= %s",
+                    print_rnumber,
+                    value,
+                    def_min_value)
                 return(num_queries)
 
-	# see if cache entry request exists
+        # see if cache entry request exists
     for page in pages:
 
         cache_dir = lib.mydirs.MyDirs().cachedir()
@@ -381,39 +439,45 @@ def determineCacheEntriesHash(rnumber,num_queries,pages):
         if os.path.exists(cache_page):
             # print("*** ", rnumber, " - CACHE FOUND ::",  cache_page)
             pr_warn += "Y "
-            hash_global['rnums'][rnumber].update({page:1})
+            hash_global['rnums'][rnumber].update({page: 1})
         else:
             num_queries += 1
             pr_warn += "NOT_FOUND  "
-            hash_global['rnums'][rnumber].update({page:0})
+            hash_global['rnums'][rnumber].update({page: 0})
     pr_warn += " "
 
     logger.info(pr_warn)
 
     return(num_queries)
 
+
 def writeOrUpdateDb(rnumber):
 
-	# write the data to the database..
+        # write the data to the database..
 
-	# my $hash; # shorted for readability
+        # my $hash; # shorted for readability
 
-	# store the values for the rnubmer in a hash
+        # store the values for the rnubmer in a hash
 
     update = ""
     logger.info("write or update %s to the database", rnumber)
 
     # my_hash['rnumber']['wkst_headers'][wkst_header] = #
     # hash_global['DBWriteValues'][rnumber][key][measure_name]
-    my_hash = {'rnumber':{'wkst_headers':{}, 'merged_headers':{}}}
+    my_hash = {'rnumber': {'wkst_headers': {}, 'merged_headers': {}}}
 
     myPAarray = lib.printArray.MyPrintArray().getMyPrintArray()
     for arrayEntryPtr in myPAarray:
 
-        merged_header  = lib.printArray.getPrintArrayValueByHeading(arrayEntryPtr, "merged_header")
-        wkst_header    = lib.printArray.getPrintArrayValueByHeading(arrayEntryPtr, "wkst_header")
-        key            = lib.printArray.getPrintArrayValueByHeading(arrayEntryPtr, "key")
-        measure_name   = lib.printArray.getPrintArrayValueByHeading(arrayEntryPtr, "measure_name")
+        merged_header = lib.printArray.getPrintArrayValueByHeading(
+            arrayEntryPtr,
+            "merged_header")
+        wkst_header = lib.printArray.getPrintArrayValueByHeading(
+            arrayEntryPtr, "wkst_header")
+        key = lib.printArray.getPrintArrayValueByHeading(arrayEntryPtr, "key")
+        measure_name = lib.printArray.getPrintArrayValueByHeading(
+            arrayEntryPtr,
+            "measure_name")
 
         if key in hash_global['DBWriteValues'][rnumber]:
             if measure_name in hash_global['DBWriteValues'][rnumber][key]:
@@ -423,7 +487,8 @@ def writeOrUpdateDb(rnumber):
         else:
             hpr_measure_name = ""
 
-        my_hash['rnumber']['wkst_headers'].update({wkst_header:hpr_measure_name})
+        my_hash['rnumber']['wkst_headers'].update(
+            {wkst_header: hpr_measure_name})
         # my_hash['rnumber']['wkst_headers'][hpr_measure_name].update({key:""})
 
         # make sure have key and measure name in hash
@@ -431,7 +496,8 @@ def writeOrUpdateDb(rnumber):
         #     if measure_name in hash_global['DBWriteValues'][rnumber][key]:
         #         my_hash['rnumber']['wkst_headers'].update({wkst_header:hash_global['DBWriteValues'][rnumber][key][measure_name]})
 
-        my_hash['rnumber']['merged_headers'].update({wkst_header:merged_header})
+        my_hash['rnumber']['merged_headers'].update(
+            {wkst_header: merged_header})
 
     prepare_headings = []
     prepare_values = []
@@ -440,8 +506,8 @@ def writeOrUpdateDb(rnumber):
     prepare_values.append(rnumber)
     # logger.info(hash_global)
 
-	# get the values for the rnumbers
-    for wkst_header,value in my_hash['rnumber']['wkst_headers'].items():
+    # get the values for the rnumbers
+    for wkst_header, value in my_hash['rnumber']['wkst_headers'].items():
 
         merged_header = my_hash['rnumber']['merged_headers'][wkst_header]
 
@@ -458,65 +524,73 @@ def writeOrUpdateDb(rnumber):
         if config['defaults']['UPDATE_DB_FROM_SERVER'] is True or config['defaults']['UPDATE_DB_FROM_CACHE'] is True:
             # determine if supposed to update the db for this heading
             # defined in printArray
-            do_update = lib.printArray.getSecondValueFromHeadingValueCombo("wkst_header", wkst_header, "do_update");
+            do_update = lib.printArray.getSecondValueFromHeadingValueCombo(
+                "wkst_header",
+                wkst_header,
+                "do_update")
 
-            if  do_update != "Yes":
+            if do_update != "Yes":
                 continue
             update = update + wkst_header_merged + '=\"' + str(value) + '\",'
 
-#		if ($UPDATE_DB_FROM_SERVER || $UPDATE_DB_FROM_CACHE) {
+#       if ($UPDATE_DB_FROM_SERVER || $UPDATE_DB_FROM_CACHE) {
 #
-#			# determine if supposed to update the db for this heading
-#			# defined in printArray
-#			my $do_update = getSecondValueFromHeadingValueCombo("wkst_header", $wkst_header, "do_update");
-#			next unless $do_update eq "Yes";
-#			$update .= "$wkst_header_merged=\"$value\",";
+#           # determine if supposed to update the db for this heading
+#           # defined in printArray
+#           my $do_update = getSecondValueFromHeadingValueCombo("wkst_header",
+#                           $wkst_header, "do_update");
+#           next unless $do_update eq "Yes";
+#           $update .= "$wkst_header_merged=\"$value\",";
 #
-#		}
-# #		else {
-# #			push (@prepare_headings, $wkst_header_merged);
-# #			push (@prepare_values, $value);
+#       }
+#  		else {
+#  			push (@prepare_headings, $wkst_header_merged);
+#  			push (@prepare_values, $value);
 
-	#if (($UPDATE_DB_FROM_SERVER || $UPDATE_DB_FROM_CACHE) && $hash_global->{db}->{$rnumber} eq 1) {
-	#
-	# If Not in the database, always need to insert Rnumber into the database
-	# print "hash_global->{db}->{rnumber} $hash_global->{db}->{$rnumber}\n";
+        # if (($UPDATE_DB_FROM_SERVER || $UPDATE_DB_FROM_CACHE)
+        # && $hash_global->{db}->{$rnumber} eq 1) {
+        #
+        # If Not in database, always need to insert Rnumber into the database
     # if rnumber not in hash_global['db'] :
     if hash_global['db'][rnumber] == 0:
 
-        print ("rnumber", rnumber , "NOT in the database")
-		# This routine is entered when a cache was not found and
-		# this is the first time a property is written to the db
+        print("rnumber", rnumber, "NOT in the database")
+        # This routine is entered when a cache was not found and
+        # this is the first time a property is written to the db
 
         prepare_headings = ",".join(prepare_headings)
         myPAarray = lib.printArray.MyPrintArray().getMyPrintArray()
         num_columns = len(myPAarray) + 1
 
-		# construct the insert statement
+        # construct the insert statement
         sql_prepare_insert_questions = "("
         for i in range(num_columns):
             sql_prepare_insert_questions += "?,"
 
-        sql_prepare_insert_questions = re.sub(',$', ')', sql_prepare_insert_questions)
+        sql_prepare_insert_questions = re.sub(
+            ',$', ')', sql_prepare_insert_questions)
 
-        sql_prepare = "INSERT INTO " +  config['defaults']['TABLE_NAME'] +  " (r_num,"
+        sql_prepare = "INSERT INTO " + \
+            config['defaults']['TABLE_NAME'] + " (r_num,"
         sql_prepare += prepare_headings + ")"
-        sql_prepare += " VALUES " +  sql_prepare_insert_questions
+        sql_prepare += " VALUES " + sql_prepare_insert_questions
         logger.info(sql_prepare)
 
-        lib.sqlConnect.sqlInsertRequest(sql_prepare,prepare_values)
+        lib.sqlConnect.sqlInsertRequest(sql_prepare, prepare_values)
 
-		# my $sth = $dbh->prepare($sql_prepare) or die "Couldn't execute statement $rnumber: $DBI::errstr;";
-		# $sth->execute(@prepare_values) or die "Couldn't execute statement $rnumber: $DBI::errstr;";
+        # my $sth = $dbh->prepare($sql_prepare) or die
+        # "Couldn't execute statement $rnumber: $DBI::errstr;";
+        # $sth->execute(@prepare_values) or
+        # die "Couldn't execute statement $rnumber: $DBI::errstr;";
     elif config['defaults']['UPDATE_DB_FROM_SERVER'] is True or config['defaults']['UPDATE_DB_FROM_CACHE'] is True:
 
-		# get rid of the last comma
+        # get rid of the last comma
         update = re.sub(',$', '', update)
 
         # build the key,values for SET statement
         # Update the database with the new values
-        sql_update  = "UPDATE " + config['defaults']['TABLE_NAME']
-        sql_update += " SET " +  update
+        sql_update = "UPDATE " + config['defaults']['TABLE_NAME']
+        sql_update += " SET " + update
         sql_update += " WHERE r_num='" + rnumber + "'"
 
         logger.info(sql_update)
@@ -525,20 +599,21 @@ def writeOrUpdateDb(rnumber):
 
     else:
         pass
-		# $logger->error("ERROR I DON't KNOW WHAT TO DO!!");
-		# $logger->error("");
+        # $logger->error("ERROR I DON't KNOW WHAT TO DO!!");
+        # $logger->error("");
 
 
 def getRequestPagesArray():
 
-	array = []
+    array = []
 
-	array.append(config['defaults_static']['PROP_DETAIL_RESULTS'])
-	array.append(config['defaults_static']['BILL_PAGE_RESULTS'])
-	array.append(config['defaults_static']['HISTORY_PAGE_RESULTS'])
-	array.append(config['defaults_static']['DATASHEET_PAGE'])
+    array.append(config['defaults_static']['PROP_DETAIL_RESULTS'])
+    array.append(config['defaults_static']['BILL_PAGE_RESULTS'])
+    array.append(config['defaults_static']['HISTORY_PAGE_RESULTS'])
+    array.append(config['defaults_static']['DATASHEET_PAGE'])
 
-	return(array)
+    return(array)
+
 
 def checkDuplicateRnumbers():
 
@@ -554,8 +629,9 @@ def checkDuplicateRnumbers():
             dupes.append(x)
 
     if len(dupes) > 0:
-        logging.error("The following -rnumbers have duplicates. Remove the duplicates")
+        logging.error(
+            "The following -rnumbers have duplicates. Remove the duplicates")
         for dupe in dupes:
             logging.error(dupe)
-        exit()
-
+        return 1
+    return 0

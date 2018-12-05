@@ -197,13 +197,11 @@ def getPrintArrayHashByValue(heading, heading_name):
 def storePrintArray(printArrayHeadings,printArray):
 
     return_hash = {'data':{}}
-    # for j in range(len(printArray)):
 
     cnt = 0
     for myprintArray in (printArray):
         # print(myprintArray)
-        for i in range(len(printArrayHeadings)):
-            heading = printArrayHeadings[i]
+        for i,heading in enumerate(printArrayHeadings):
             heading_val = myprintArray[i]
             # print("i={} heading={}, myprintArray={}".format(i,heading,myprintArray))
             if cnt not in return_hash['data']:

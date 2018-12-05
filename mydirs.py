@@ -20,15 +20,15 @@ class MyDirs(object):
 
         # print("jason", config['defaults']['WORK_DIR'])
         if config['defaults']['WORK_DIR'] == './':
-            self.CACHE_DIR           = os.path.abspath(DEFAULT_RUN_DIR + "/cache")
+            self.CACHE_DIR = os.path.abspath(DEFAULT_RUN_DIR + "/cache")
             self.ADVANCED_SEARCH_DIR = os.path.abspath(DEFAULT_RUN_DIR + "/searches")
-            self.EXCEL_DIR           = os.path.abspath(DEFAULT_RUN_DIR + "/excel")
-            self.LOG_DIR             = os.path.abspath(DEFAULT_RUN_DIR + "/cache")
+            self.EXCEL_DIR = os.path.abspath(DEFAULT_RUN_DIR + "/excel")
+            self.LOG_DIR = os.path.abspath(DEFAULT_RUN_DIR + "/cache")
         else :
-            self.CACHE_DIR           = os.path.abspath(DEFAULT_RUN_DIR + "/cache/" + config['defaults']['COUNTY'])
+            self.CACHE_DIR = os.path.abspath(DEFAULT_RUN_DIR + "/cache/" + config['defaults']['COUNTY'])
             self.ADVANCED_SEARCH_DIR = os.path.abspath(DEFAULT_RUN_DIR + "/searches/" + config['defaults']['COUNTY'])
-            self.EXCEL_DIR           = os.path.abspath(DEFAULT_RUN_DIR + "/excel" + config['defaults']['COUNTY'])
-            self.LOG_DIR             = os.path.abspath(DEFAULT_RUN_DIR + "/cache" + config['defaults']['COUNTY'])
+            self.EXCEL_DIR = os.path.abspath(DEFAULT_RUN_DIR + "/excel/" + config['defaults']['COUNTY'])
+            self.LOG_DIR = os.path.abspath(DEFAULT_RUN_DIR + "/cache/" + config['defaults']['COUNTY'])
 
 
         # if config.DATE or (args.rnumbers and args.rnumbers is "ALL"):
@@ -37,11 +37,12 @@ class MyDirs(object):
     def buildmydirs(self):
 
         for dir in (self.CACHE_DIR, self.ADVANCED_SEARCH_DIR, self.EXCEL_DIR):
-            if not os.path.isdir(dir):
-                try:
-                    os.mkdir(dir)
-                except OSError:
-                    print("Creation of the directory %s failed" % dir)
+            print('dir = ', dir)
+            try:
+                os.makedirs(dir, exist_ok=True)
+            except Exception:
+                print("Creation of the directory %s failed" % dir)
+                exit()
 
     def cachedir(self):
         # print(self.CACHE_DIR)

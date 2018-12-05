@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 config = lib.settings.config
 
 def writeExcel(rnumbers):
+    """Library for writing properties to an Excel Spreadsheet"""
 
     num_rnumbers = len(rnumbers)
     rnumber_arrays = []
@@ -289,6 +290,7 @@ def writeRnumberRows(workbook,worksheet,worksheet_db,row,col,printhash,rnumbers_
     return(row,col)
 
 def getGoogleLink(addr):
+    """Return google maps link for given address"""
 
     link = "http://maps.google.com/?q=" + addr + "&sensor=true"
 
@@ -384,6 +386,7 @@ def setFormatting(workbook,value,my_format,format_val):
     return (my_format)
 
 def writeMergedHeaders(workbook,worksheet,worksheet_db,row,col,printhash):
+    """Write the merged table headers to Excel file"""
 
     for heading in printhash['headers_merged']:
         if heading is "":
@@ -407,6 +410,7 @@ def writeMergedHeaders(workbook,worksheet,worksheet_db,row,col,printhash):
     return(row,col)
 
 def writeNonMergedHeaders(workbook,worksheet,worksheet_db,row,col,printhash):
+    """Write non-merged headers to Excel file"""
 
 	# get the columns to print.  column order is from printArray
     # prepend "r_num" to array
@@ -466,6 +470,7 @@ def _number_to_letter(number):
 # Convert a number into an Excel column name.
 
 def ntol(n):
+    """Convert excel column letter to a number"""
     # The maximum number of columns in an Excel worksheet is ...
     max_excel_column = 256
 
@@ -481,8 +486,8 @@ def ntol(n):
     return l
 
 def getWkbFormats(workbook, format_request):
+    """Set the cell formatting based on format_request argument"""
 
-    # print ("format_request", format_request)
     if format_request is "format_default":  # default
         my_format = workbook.add_format(
             {'align': 'right'},

@@ -42,7 +42,7 @@ def generate_argparser():
     group_db_update.add_argument('-update_db_file', action="store_true", help=".xls file with desired changes to make to DB")
     group_db_update.add_argument('-update_db_from_server', action="store_true", help="will force requested rnumbers to update information with latest data from server")
     group_db_update.add_argument('-update_db_from_cache', action="store_true", help="used to recalculate values in the db, from the cache  values")
-    group_db_update.add_argument('-update_db')
+    # group_db_update.add_argument('-update_db')
     group_db_update.add_argument('-update_db_sum_diff_than_db', help="If the differences in summary_db and database are different, update without resolving conflicts")
 
     group_regress = parser.add_argument_group('REGRESSION OPTIONS')
