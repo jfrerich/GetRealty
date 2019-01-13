@@ -279,7 +279,8 @@ def buildTableIfDoesntExist():
     table_name = config['defaults']['TABLE_NAME']
 
     query_headings = ' TEXT, '.join(headingsArray) + " TEXT)"
-    query = 'CREATE TABLE IF NOT EXISTS {} (r_num PRIMARY KEY, '.format(table_name) + query_headings
+    query = 'CREATE TABLE IF NOT EXISTS {} \
+        (r_num PRIMARY KEY, '.format(table_name) + query_headings
 
     sqlSendSimpleRequest(query)
 

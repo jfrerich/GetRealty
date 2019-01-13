@@ -1,4 +1,3 @@
-import gzip
 import logging
 import re
 import subprocess
@@ -70,8 +69,9 @@ def readRnumHistPageResponseData(rnumber, hash_key, response_file):
     # print(soup.prettify())
 
     tags = soup.find('taxyear')
-    hash_global['DBWriteValues'][rnumber][hash_key].update(
-        {'MinTaxYear': tags.get('mintaxyear')})
+
+    hash_short = hash_global['DBWriteValues'][rnumber][hash_key]
+    hash_short.update({'MinTaxYear': tags.get('mintaxyear')})
 
     tags = soup.find_all('history')
     for t in tags:
@@ -82,15 +82,12 @@ def readRnumHistPageResponseData(rnumber, hash_key, response_file):
         if value == "" or not t.has_attr('value'):
             continue
 
-        if 'TaxYear' not in hash_global['DBWriteValues'][rnumber][hash_key]:
-            (hash_global['DBWriteValues']
-             [rnumber][hash_key].update({'TaxYear': {}}))
-        if taxyear not in (hash_global['DBWriteValues']
-                           [rnumber][hash_key]['TaxYear']):
-            (hash_global['DBWriteValues']
-             [rnumber][hash_key]['TaxYear'].update({taxyear: {}}))
-        (hash_global['DBWriteValues']
-         [rnumber][hash_key]['TaxYear'][taxyear].update({name: value}))
+        if 'TaxYear' not in hash_short:
+            hash_short.update({'TaxYear': {}})
+        if taxyear not in (hash_short['TaxYear']):
+            hash_short['TaxYear'].update({taxyear: {}})
+
+        hash_short['TaxYear'][taxyear].update({name: value})
 
     # pprint.PrettyPrinter().pprint(hash_global['DBWriteValues'][rnumber][hash_key])
 
@@ -146,11 +143,11 @@ def getDetailPropIDPropOwnerID(rnumber, hash_key, soup):
 
     try:
         propertyID
-    except:
+    except BaseException:
         logger.error("ERROR: propertyID or propertyOwnerID not defined")
     try:
         propertyOwnerID
-    except:
+    except BaseException:
         logger.error("ERROR: propertyID or propertyOwnerID not defined")
 
     prefix = (config['defaults_static']['HOST_TAX_ACCESSOR']
@@ -179,21 +176,15 @@ def getDetailPropIDPropOwnerID(rnumber, hash_key, soup):
     # $rnumber&slayer=0&exprnum=0";
     html_gis = config['defaults_static']['GIS_WWW'] + rnumber
 
-    hash_global['DBWriteValues'][rnumber][hash_key].update(
-        {'bills_link': html_bills})
-    hash_global['DBWriteValues'][rnumber][hash_key].update(
-        {'details_link': html_details})
-    hash_global['DBWriteValues'][rnumber][hash_key].update(
-        {'hist_link': html_hist})
-    hash_global['DBWriteValues'][rnumber][hash_key].update(
-        {'GIS_link': html_gis})
-    hash_global['DBWriteValues'][rnumber][hash_key].update(
-        {'datasheet_link': html_data})
+    hash_short = hash_global['DBWriteValues'][rnumber][hash_key]
+    hash_short.update({'bills_link': html_bills})
+    hash_short.update({'details_link': html_details})
+    hash_short.update({'hist_link': html_hist})
+    hash_short.update({'GIS_link': html_gis})
+    hash_short.update({'datasheet_link': html_data})
 
-    hash_global['DBWriteValues'][rnumber][hash_key].update(
-        {'propertyID': propertyID})
-    hash_global['DBWriteValues'][rnumber][hash_key].update(
-        {'propertyOwnerID': propertyOwnerID})
+    hash_short.update({'propertyID': propertyID})
+    hash_short.update({'propertyOwnerID': propertyOwnerID})
     # return(0)
 
 # ####################################
@@ -238,7 +229,7 @@ def getDetailMainEntries(rnumber, hash_key, response_file):
     the_page = open(response_file)
     soup = BeautifulSoup(the_page, "html.parser")
 
-    return4 = getDetailPropIDPropOwnerID(rnumber, hash_key, soup)
+    getDetailPropIDPropOwnerID(rnumber, hash_key, soup)
     table = soup.table
 
     owner_info_begin = 0
@@ -367,7 +358,6 @@ def getRnumbersFromAdvSearchOrRnumberInput():
 
 
 def getPropIDSearchResult(RNUM):
-
     '''Get a single Rnumber page response.'''
     # $logger->info("** Get Property ID Search Page Response**");
 
@@ -378,10 +368,10 @@ def getPropIDSearchResult(RNUM):
     post = '/Property-Detail'
     url = host + post
 
-    values = { "PropertyQuickRefID": RNUM }
-    DATA = urllib.parse.urlencode(values).encode("utf-8")
+    # values = {"PropertyQuickRefID": RNUM}
+    # DATA = urllib.parse.urlencode(values).encode("utf-8")
 
-    headers = {}
+    # headers = {}
 
     # passing url and data separately does not work.  just construct the url
     # and pass to Request
@@ -389,10 +379,13 @@ def getPropIDSearchResult(RNUM):
     req = urllib.request.Request(url)
 
     # this works
-    # req = urllib.request.Request('http://www.bastroptac.com/Property-Detail?PropertyQuickRefID=R26053')
+    # req = urllib.request.Request('(http://www.bastroptac.com/'
+    #                              'Property-Detail?'
+    #                              'PropertyQuickRefID=R26053')
 
     # Also works
-    # url = 'http://www.bastroptac.com/Property-Detail?PropertyQuickRefID=R26053'
+    # url = ('http://www.bastroptac.com/Property-Detail?'
+    #        'PropertyQuickRefID=R26053')
     # req = urllib.request.Request(url)
 
     response = urllib.request.urlopen(req)
@@ -406,8 +399,8 @@ def getPropIDSearchResult(RNUM):
     the_page = response.read().decode()
     print(the_page)
 
-    PROP_ID_SEARCH_RESPONSE_FILE_UNZIPPED = \
-        lib.mydirs.MyDirs().advanced_search_file(".RNUMBER_SEARCH_RESULTS.html")
+    PROP_ID_SEARCH_RESPONSE_FILE_UNZIPPED = lib.mydirs.MyDirs(
+    ).advanced_search_file(".RNUMBER_SEARCH_RESULTS.html")
     fh = open(PROP_ID_SEARCH_RESPONSE_FILE_UNZIPPED, "w")
     fh.write(the_page)
 
@@ -616,8 +609,10 @@ def getPost(page_type, my_property, response_file_suffix):
 
 def readRnumBillsPageResponseData(rnumber, hash_key, response_file):
 
-    return1 = getPastCurrentTotalAmntsDue(rnumber, hash_key, response_file)
-    return2 = getYearlyInfo(rnumber, hash_key, response_file)
+    getPastCurrentTotalAmntsDue(rnumber, hash_key, response_file)
+    getYearlyInfo(rnumber, hash_key, response_file)
+    # return1 = getPastCurrentTotalAmntsDue(rnumber, hash_key, response_file)
+    # return2 = getYearlyInfo(rnumber, hash_key, response_file)
 #
 # 	unless ($return1 && $return2) {
 # 		$logger->warn("BILLS: return1=$return1 return2=$return2");
@@ -627,8 +622,8 @@ def readRnumBillsPageResponseData(rnumber, hash_key, response_file):
 def getPastCurrentTotalAmntsDue(rnumber, hash_key, response_file):
 
     # check that response file is not corrupt.
-    check_values = ("tblFees", "Past Years Due",
-                    "Current Amount Due", "Total Amount Due")
+    # check_values = ("tblFees", "Past Years Due",
+    #                 "Current Amount Due", "Total Amount Due")
     # return(0) unless checkValuesExistInResponseFile($response_file,
     #                                                 @check_values);
 
@@ -753,7 +748,6 @@ def readRnumDataSheetPageResponseData(rnumber, hash_key, response_file):
 
     hash_global['DBWriteValues'][rnumber][hash_key]['NumTimesSold'] \
         = numtimessold
-# 	close $fh;
 
 
 def createDataSheetXML(rnumber, response_file):
