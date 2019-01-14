@@ -1,5 +1,4 @@
 ## getrealty
-A little info about your project and/ or overview that explains **what** the project is about.
 getrealty is a python engine I created to scrape data from appraisal district sites and store property information into a database.
 
 ## Motivation
