@@ -1,12 +1,13 @@
 import logging
 import pprint
 
-import lib.settings
+import getrealty
 
 pp = pprint.PrettyPrinter(width=1)
 
-config = lib.settings.config
+config = getrealty.settings.config
 logger = logging.getLogger(__name__)
+
 
 class MyPrintArray(object):
 

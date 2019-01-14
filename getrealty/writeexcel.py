@@ -3,15 +3,13 @@ import pprint
 import re
 from collections import deque
 
-import lib.mydirs
-import lib.printArray
-import lib.settings
+import getrealty
 import openpyxl
 import xlsxwriter
 
 pp = pprint.PrettyPrinter(width=1)
 logger = logging.getLogger(__name__)
-config = lib.settings.config
+config = getrealty.settings.config
 
 def writeExcel(rnumbers):
     """Library for writing properties to an Excel Spreadsheet"""
@@ -33,7 +31,7 @@ def writeExcel(rnumbers):
     logger.info("Writing %s Rnumbers",num_rnum_arrays)
 
     i = 0
-    excel_dir = lib.mydirs.MyDirs().exceldir()
+    excel_dir = getrealty.mydirs.MyDirs().exceldir()
     def_output = config['defaults']['OUTPUT']
     # writefile = config.default_outputxls
     writefile = excel_dir + '/' + def_output + ".xlsx"
@@ -69,7 +67,7 @@ def writeExcel(rnumbers):
 
 def writeWorkBook(workbook,num_rnumbers,rnumbers_only):
 
-    printhash = lib.printArray.CreatePrintHash()
+    printhash = getrealty.printArray.CreatePrintHash()
 
     worksheet      = workbook.add_worksheet("Summary")
     worksheet_db   = workbook.add_worksheet("Summary_db")
@@ -110,7 +108,7 @@ def writeWorkBook(workbook,num_rnumbers,rnumbers_only):
     worksheet.freeze_panes( 2, 3 ); # Freeze row, col
     worksheet_db.freeze_panes( 2, 3 ); # Freeze row, col
 
-    headingsArray = lib.printArray.getHeadingsFromPrintArray(1,1);
+    headingsArray = getrealty.printArray.getHeadingsFromPrintArray(1,1);
     num_headers = len(headingsArray)
 
 	# VERY IMPORTANT -- If you dont auto filter on all the columns, the sort
@@ -160,11 +158,11 @@ def writeRnumberRows(workbook,worksheet,worksheet_db,row,col,printhash,rnumbers_
     work_dir = config['defaults']['WORK_DIR']
     sql_file = work_dir + '/RealEstate.db'
 
-    table_values = lib.sqlConnect.sqlQueryRequest(sql_where)
+    table_values = getrealty.sqlConnect.sqlQueryRequest(sql_where)
 
 	# get all the headings from the db
     sql_query = 'PRAGMA table_info( {} )'.format(table_name)
-    sql_results = lib.sqlConnect.sqlQueryRequest(sql_query)
+    sql_results = getrealty.sqlConnect.sqlQueryRequest(sql_query)
 
     db_headings = [tup[1] for tup in sql_results]
 
@@ -191,7 +189,7 @@ def writeRnumberRows(workbook,worksheet,worksheet_db,row,col,printhash,rnumbers_
 
     # print(hash_values['rnum_values'])
 	# get the columns to print.  column order is from printArray
-    headingsArray = ['r_num'] + lib.printArray.getHeadingsFromPrintArray(1,1)
+    headingsArray = ['r_num'] + getrealty.printArray.getHeadingsFromPrintArray(1,1)
 
     # pp.pprint(hash_values['rnumbers'])
     # pp.pprint(hash_values['rnum_values'])
@@ -414,8 +412,8 @@ def writeNonMergedHeaders(workbook,worksheet,worksheet_db,row,col,printhash):
 
 	# get the columns to print.  column order is from printArray
     # prepend "r_num" to array
-    headingsMergedArray    = ["r_num"] + lib.printArray.getHeadingsFromPrintArray(1,1)
-    headingsNotMergedArray = ["r_num"] + lib.printArray.getHeadingsFromPrintArray(0,1)
+    headingsMergedArray    = ["r_num"] + getrealty.printArray.getHeadingsFromPrintArray(1,1)
+    headingsNotMergedArray = ["r_num"] + getrealty.printArray.getHeadingsFromPrintArray(0,1)
 
     # print("\n", headingsNotMergedArray)
 
@@ -439,7 +437,7 @@ def writeNonMergedHeaders(workbook,worksheet,worksheet_db,row,col,printhash):
 
         comment = None
         if heading is not "r_num":
-            comment = lib.printArray.getSecondValueFromHeadingValueCombo("wkst_header", headingNotMerged, "comment")
+            comment = getrealty.printArray.getSecondValueFromHeadingValueCombo("wkst_header", headingNotMerged, "comment")
 
 		# write comments
         if comment:

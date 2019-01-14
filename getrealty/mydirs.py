@@ -2,11 +2,11 @@ import logging
 import os
 import pprint
 
-import lib.settings
+import getrealty.settings
 
 
 pp = pprint.PrettyPrinter(width=1)
-config = lib.settings.config
+config = getrealty.settings.config
 
 logger = logging.getLogger(__name__)
 

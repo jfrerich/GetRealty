@@ -3,19 +3,19 @@ import re
 import subprocess
 import urllib
 
-import lib.settings
-import lib.mydirs
+import getrealty.settings
+import getrealty.mydirs
 from bs4 import BeautifulSoup
 
 
 logger = logging.getLogger(__name__)
-config = lib.settings.config
-hash_global = lib.settings.hash_global
+config = getrealty.settings.config
+hash_global = getrealty.settings.hash_global
 
 
 def readResponseData(page_type, rnumber, response_file_suffix):
 
-    cache_dir = lib.mydirs.MyDirs().cachedir()
+    cache_dir = getrealty.mydirs.MyDirs().cachedir()
     response_file = cache_dir + '/' + rnumber + '/' + response_file_suffix
     # add rnumber to dict, if it doesn't exist
     if rnumber not in hash_global['DBWriteValues']:
@@ -307,7 +307,7 @@ def getRnumbersFromAdvSearchOrRnumberInput():
 
         # ADVANCED_SEARCH_RESPONSE_FILE = MyDirs().advanced_search_file()
         ADVANCED_SEARCH_RESPONSE_FILE = \
-            lib.mydirs.MyDirs().advanced_search_file(".SEARCH_RESULTS.html")
+            getrealty.mydirs.MyDirs().advanced_search_file(".SEARCH_RESULTS.html")
         response_file = ADVANCED_SEARCH_RESPONSE_FILE
         properties = getRnumbersFromAdvancedSearchResponse(
             "",
@@ -347,7 +347,7 @@ def getRnumbersFromAdvSearchOrRnumberInput():
                 getPropIDSearchResult(RNUM)
 
                 response_file = \
-                    (lib.mydirs.MyDirs()
+                    (getrealty.mydirs.MyDirs()
                      .advanced_search_file(".RNUMBER_SEARCH_RESULTS.html"))
                 properties = \
                     getRnumbersFromAdvancedSearchResponse(RNUM,

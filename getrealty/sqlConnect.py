@@ -3,12 +3,11 @@ import pprint
 import re
 import sqlite3
 
-import lib.printArray
-import lib.settings
+import getrealty
 
 pp = pprint.PrettyPrinter(width=1)
 logger = logging.getLogger(__name__)
-config = lib.settings.config
+config = getrealty.settings.config
 
 
 class DB(object):
@@ -226,7 +225,7 @@ def getSearchSqlDbWhereCommand(columns):
 
 def sqlSendSimpleRequest(command):
 
-    db = lib.sqlConnect.DB()
+    db = getrealty.sqlConnect.DB()
     db.execute(command)
     db.commit()
     db.close()
@@ -240,7 +239,7 @@ def sqlSendSimpleRequest(command):
 
 def sqlInsertRequest(command, prepare_values):
 
-    db = lib.sqlConnect.DB()
+    db = getrealty.sqlConnect.DB()
     db.execute(command, prepare_values)
     db.commit()
     db.close()
@@ -258,7 +257,7 @@ def sqlQueryRequest(command):
     # second "prepare_values", used for INSERT when define a prepare statement
     # and then send the values as the second argument
 
-    db = lib.sqlConnect.DB()
+    db = getrealty.sqlConnect.DB()
     db.connect()
     db.execute(command)
 
@@ -274,7 +273,7 @@ def buildTableIfDoesntExist():
     # call to determine if it existed first. In here, we use "IF NOT EXISTS"
     # sql command to achieve the same
 
-    headingsArray = lib.printArray.getHeadingsFromPrintArray(1, 1)
+    headingsArray = getrealty.printArray.getHeadingsFromPrintArray(1, 1)
 
     table_name = config['defaults']['TABLE_NAME']
 
@@ -311,7 +310,7 @@ def UpdateDBColumns():
     # this routine reads the printArray and creates any new columns
     # don't exist in the TABLE.  It does it on the fly so that printArray
     # can be updated without sql commands failing to find columnns
-    AllHeadings = lib.printArray.getHeadingsFromPrintArray(1, 0)
+    AllHeadings = getrealty.printArray.getHeadingsFromPrintArray(1, 0)
 
     table_name = config['defaults']['TABLE_NAME']
 

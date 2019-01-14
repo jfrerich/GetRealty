@@ -3,10 +3,10 @@ import os
 import sys
 from argparse import ArgumentParser
 
-import lib.settings
+import getrealty
 
 
-config = lib.settings.config
+config = getrealty.settings.config
 
 logger = logging.getLogger(__name__)
 

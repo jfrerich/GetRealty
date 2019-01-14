@@ -3,11 +3,11 @@ import re
 from collections import Counter
 from datetime import date
 
-import lib.mydirs
+import getrealty
 
 
-config = lib.settings.config
-hash_global = lib.settings.hash_global
+config = getrealty.settings.config
+hash_global = getrealty.settings.hash_global
 
 logger = logging.getLogger(__name__)
 
@@ -182,7 +182,7 @@ def createAdditionalInformation(rnumber, key_calcs):
     hash_key_calcs['LandNHSMaxReduced'] = landNHSMaxRedAmt
     hash_key_calcs['LandNHSPctOfMax'] = landNHSPctOfMax
 
-    cache_dir = lib.mydirs.MyDirs().cachedir()
+    cache_dir = getrealty.mydirs.MyDirs().cachedir()
     hash_key_calcs.update(
         {'bills_wkt': "/".join([cache_dir, rnumber, key_bill])})
     hash_key_calcs.update(

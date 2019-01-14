@@ -3,12 +3,14 @@ import os
 import pprint
 import re
 
-import lib.createAdditionalInfo
-import lib.mydirs
-import lib.settings
-import lib.sqlConnect
-import lib.webdata
-import lib.writeexcel
+# import GetRealty
+import getrealty
+# import getrealty.createAdditionalInfo
+# import getrealty.mydirs
+# import getrealty.settings
+# import getrealty.sqlConnect
+# import getrealty.webdata
+# import getrealty.writeexcel
 
 
 pp = pprint.PrettyPrinter(width=1)
@@ -16,8 +18,8 @@ logger = logging.getLogger(__name__)
 print('name', __name__)
 
 # shorten so don't have to pass lib.config.config all over this module
-hash_global = lib.settings.hash_global
-config = lib.settings.config
+hash_global = getrealty.settings.hash_global
+config = getrealty.settings.config
 
 
 def GetRealty():
@@ -42,12 +44,12 @@ def GetRealty():
     # calculate additional info for each rnumber
     # write the output to XLSX file
 
-    lib.mydirs.MyDirs().buildmydirs()
+    getrealty.mydirs.MyDirs().buildmydirs()
 
     # build the SQL table is it doesn't already exist
-    lib.sqlConnect.buildTableIfDoesntExist()
+    getrealty.sqlConnect.buildTableIfDoesntExist()
 
-    lib.sqlConnect.UpdateDBColumns()
+    getrealty.sqlConnect.UpdateDBColumns()
 
     # check that there are no duplicate rnumbers specified with -rnumbers
     if config['defaults']['RNUMBERS'] is not False:
@@ -75,14 +77,14 @@ def GetRealty():
         saveRegressionData()
 
     # write the selected rnumbers to XLSX file
-    lib.writeexcel.writeExcel(rnumbers)
+    getrealty.writeexcel.writeExcel(rnumbers)
     logger.info(hash_global)
 
 
 def buildCacheDict():
 
     # get all the caches entries
-    cache_dir = lib.mydirs.MyDirs().cachedir()
+    cache_dir = getrealty.mydirs.MyDirs().cachedir()
     dirlist = os.listdir(cache_dir)
 
     for mydir in dirlist:
@@ -94,11 +96,11 @@ def saveRegressionData():
 
     fh_regress = open('test.regress', "w")
 
-    sql_where = lib.sqlConnect.getSearchSqlDbWhereCommand(
+    sql_where = getrealty.sqlConnect.getSearchSqlDbWhereCommand(
         config['defaults']['REGRESS_GET_COLUMNS'])
     logger.info("sql_where = %s", sql_where)
 
-    my_values = lib.sqlConnect.sqlQueryRequest(sql_where)
+    my_values = getrealty.sqlConnect.sqlQueryRequest(sql_where)
 
     for value in my_values:
         fh_regress.write(str(value))
@@ -125,7 +127,7 @@ def writeDbWithCacheOrServerData(rnumbers, rnumPropIDArray):
         # next PROP if (($hash_global['rnums']->{$rnumber}->{omit}));
 
         # create cache r number dir if doesn't exist
-        cache_dir = lib.mydirs.MyDirs().cachedir()
+        cache_dir = getrealty.mydirs.MyDirs().cachedir()
         cache_dir_new = cache_dir + '/' + rnumber
 
         if not os.path.exists(cache_dir_new):
@@ -151,16 +153,16 @@ def writeDbWithCacheOrServerData(rnumbers, rnumPropIDArray):
             # CREATE A DATABASE ENTRY
             # If during a read of the files, good return value is 0. the file
             # is corrupt
-            good_detail = lib.webdata.readResponseData(
+            good_detail = getrealty.webdata.readResponseData(
                 'Details', rnumber,
                 config['defaults_static']['PROP_DETAIL_RESULTS'])
-            good_bills = lib.webdata.readResponseData(
+            good_bills = getrealty.webdata.readResponseData(
                 'Bills', rnumber,
                 config['defaults_static']['BILL_PAGE_RESULTS'])
-            good_hist = lib.webdata.readResponseData(
+            good_hist = getrealty.webdata.readResponseData(
                 'History', rnumber,
                 config['defaults_static']['HISTORY_PAGE_RESULTS'])
-            good_data = lib.webdata.readResponseData(
+            good_data = getrealty.webdata.readResponseData(
                 'Data', rnumber,
                 config['defaults_static']['DATASHEET_PAGE'])
 
@@ -185,7 +187,7 @@ def writeDbWithCacheOrServerData(rnumbers, rnumPropIDArray):
             # Create additional calculations, to add to the database. These are
             # values that have been found useful to the user, but not available
             # as raw numbers in the data files
-            lib.createAdditionalInfo.createAdditionalInformation(
+            getrealty.createAdditionalInfo.createAdditionalInformation(
                 rnumber, "calcs")
 
             # write the rnumber to the database, or update and existing rnumber
@@ -214,25 +216,25 @@ def getDataFromServers(rnumber, my_property):
 
     if (do_update == 1 or hash_global['rnums'][rnumber]
             [config['defaults_static']['HISTORY_PAGE_RESULTS']] == 0):
-        lib.webdata.getPost("History", my_property,
+        getrealty.webdata.getPost("History", my_property,
                             config['defaults_static']
                             ['HISTORY_PAGE_RESULTS'])
 
     if (do_update == 1 or hash_global['rnums'][rnumber]
             [config['defaults_static']['PROP_DETAIL_RESULTS']] == 0):
-        lib.webdata.getPost(
+        getrealty.webdata.getPost(
             "Details", my_property,
             config['defaults_static']['PROP_DETAIL_RESULTS'])
 
     if (do_update == 1 or hash_global['rnums'][rnumber]
             [config['defaults_static']['BILL_PAGE_RESULTS']] == 0):
-        lib.webdata.getPost(
+        getrealty.webdata.getPost(
             "Bills", my_property,
             config['defaults_static']['BILL_PAGE_RESULTS'])
 
     if (do_update == 1 or hash_global['rnums'][rnumber]
             [config['defaults_static']['DATASHEET_PAGE']] == 0):
-        lib.webdata.getPost(
+        getrealty.webdata.getPost(
             "Data",
             my_property,
             config['defaults_static']['DATASHEET_PAGE'])
@@ -246,17 +248,17 @@ def getRnumbers():
     properties = []
     # Get rnumbers from Db Search
     if config['defaults']['DB_SEARCH'] is True:
-        sql_where = lib.sqlConnect.getSearchSqlDbWhereCommand(False)
-        sql_results = lib.sqlConnect.sqlQueryRequest(sql_where)
+        sql_where = getrealty.sqlConnect.getSearchSqlDbWhereCommand(False)
+        sql_results = getrealty.sqlConnect.sqlQueryRequest(sql_where)
 
         rnumbers = [tup[0] for tup in sql_results]
     else:
 
         if config['defaults']['USE_LAST_ADV_SEARCH'] is not True \
                 or config['defaults']['RNUMBERS'] is not False:
-            lib.webdata.getAdvancedSearchPageResponse()
+            getrealty.webdata.getAdvancedSearchPageResponse()
 
-        properties = lib.webdata.getRnumbersFromAdvSearchOrRnumberInput()
+        properties = getrealty.webdata.getRnumbersFromAdvSearchOrRnumberInput()
 
         # get the desired Rnumbers only
         for my_property in properties:
@@ -321,7 +323,7 @@ def checkIfRnumbersInDb(rnumbers):
         sql_command = "SELECT r_num FROM " + \
             config['defaults']['TABLE_NAME'] + " WHERE r_num=\"" + RNUM + "\""
 
-        sql_results = lib.sqlConnect.sqlQueryRequest(sql_command)
+        sql_results = getrealty.sqlConnect.sqlQueryRequest(sql_command)
 
         values = [tup[0] for tup in sql_results]
 
@@ -433,7 +435,7 @@ def determineCacheEntriesHash(rnumber, num_queries, pages):
         # see if cache entry request exists
     for page in pages:
 
-        cache_dir = lib.mydirs.MyDirs().cachedir()
+        cache_dir = getrealty.mydirs.MyDirs().cachedir()
         cache_page = cache_dir + '/' + rnumber + '/' + page
 
         if os.path.exists(cache_page):
@@ -466,16 +468,16 @@ def writeOrUpdateDb(rnumber):
     # hash_global['DBWriteValues'][rnumber][key][measure_name]
     my_hash = {'rnumber': {'wkst_headers': {}, 'merged_headers': {}}}
 
-    myPAarray = lib.printArray.MyPrintArray().getMyPrintArray()
+    myPAarray = getrealty.printArray.MyPrintArray().getMyPrintArray()
     for arrayEntryPtr in myPAarray:
 
-        merged_header = lib.printArray.getPrintArrayValueByHeading(
+        merged_header = getrealty.printArray.getPrintArrayValueByHeading(
             arrayEntryPtr,
             "merged_header")
-        wkst_header = lib.printArray.getPrintArrayValueByHeading(
+        wkst_header = getrealty.printArray.getPrintArrayValueByHeading(
             arrayEntryPtr, "wkst_header")
-        key = lib.printArray.getPrintArrayValueByHeading(arrayEntryPtr, "key")
-        measure_name = lib.printArray.getPrintArrayValueByHeading(
+        key = getrealty.printArray.getPrintArrayValueByHeading(arrayEntryPtr, "key")
+        measure_name = getrealty.printArray.getPrintArrayValueByHeading(
             arrayEntryPtr,
             "measure_name")
 
@@ -524,7 +526,7 @@ def writeOrUpdateDb(rnumber):
         if config['defaults']['UPDATE_DB_FROM_SERVER'] is True or config['defaults']['UPDATE_DB_FROM_CACHE'] is True:
             # determine if supposed to update the db for this heading
             # defined in printArray
-            do_update = lib.printArray.getSecondValueFromHeadingValueCombo(
+            do_update = getrealty.printArray.getSecondValueFromHeadingValueCombo(
                 "wkst_header",
                 wkst_header,
                 "do_update")
@@ -559,7 +561,7 @@ def writeOrUpdateDb(rnumber):
         # this is the first time a property is written to the db
 
         prepare_headings = ",".join(prepare_headings)
-        myPAarray = lib.printArray.MyPrintArray().getMyPrintArray()
+        myPAarray = getrealty.printArray.MyPrintArray().getMyPrintArray()
         num_columns = len(myPAarray) + 1
 
         # construct the insert statement
@@ -576,7 +578,7 @@ def writeOrUpdateDb(rnumber):
         sql_prepare += " VALUES " + sql_prepare_insert_questions
         logger.info(sql_prepare)
 
-        lib.sqlConnect.sqlInsertRequest(sql_prepare, prepare_values)
+        getrealty.sqlConnect.sqlInsertRequest(sql_prepare, prepare_values)
 
         # my $sth = $dbh->prepare($sql_prepare) or die
         # "Couldn't execute statement $rnumber: $DBI::errstr;";
@@ -595,7 +597,7 @@ def writeOrUpdateDb(rnumber):
 
         logger.info(sql_update)
 
-        lib.sqlConnect.sqlSendSimpleRequest(sql_update)
+        getrealty.sqlConnect.sqlSendSimpleRequest(sql_update)
 
     else:
         pass
