@@ -1,5 +1,9 @@
 from setuptools import setup
 
+def readme():
+    with open('README.md') as f:
+        return f.read()
+
 setup(name='getrealty',
       version='1.1',
       description='''python engine for property information from appraisal
