@@ -154,7 +154,6 @@ def getSecondValueFromHeadingValueCombo(heading, heading_name, heading2):
 
 	# get the array entry number in print array data
     array_number = getPrintArrayHashByValue(heading, heading_name)
-    # print("array_number=", array_number)
 
 	# get value for 2nd heading
     value = myRH['data'][array_number][heading2]
@@ -170,9 +169,7 @@ def getPrintArrayHashByValue(heading, heading_name):
     myRH = myPA.getMyReturnHash()
 
     num_returns = 0
-	# for PrintArrayEntry in (sort keys %{$printArray_hash->{data}}) {
     my_list = list(myRH['data'])
-    # print(my_list)
     for PrintArrayEntry in my_list:
 
         if not myRH['data'][PrintArrayEntry][heading]:
@@ -183,16 +180,7 @@ def getPrintArrayHashByValue(heading, heading_name):
         if myRH['data'][PrintArrayEntry][heading] is heading_name:
             return_hash_number = PrintArrayEntry
             num_returns = num_returns + 1
-    #
-    # if num_returns eq 0:
-	# 	# $logger->error("heading \"$heading\" && heading_name \"$heading_name\" do not ");
-	# 	# $logger->error("        exist in the printArray.  Cannot use this feature ... ");
-    #     exit()
-    # elif num_returns > 1:
-	# 	# $logger->error("ERROR : heading \"$heading\" && heading_name \"$heading_name\" exists in ");
-	# 	# $logger->error("        more than one printArray.  Cannot use this feature ... ");
-    #     exit()
-    # else:
+
     return(return_hash_number)
 
 def storePrintArray(printArrayHeadings,printArray):
@@ -204,19 +192,13 @@ def storePrintArray(printArrayHeadings,printArray):
         # print(myprintArray)
         for i,heading in enumerate(printArrayHeadings):
             heading_val = myprintArray[i]
-            # print("i={} heading={}, myprintArray={}".format(i,heading,myprintArray))
             if cnt not in return_hash['data']:
-                # print("i={} cnt={} heading={} heading_val={}".format(i,cnt,heading,heading_val))
                 return_hash['data'][cnt] = {heading:heading_val}
-                # pp.pprint(return_hash)
-                # print("jason")
             else :
-                # print("frerich")
                 return_hash['data'][cnt].update({heading:heading_val})
 
         cnt += 1
     return_hash['headings'] = printArrayHeadings
-    # pp.pprint(return_hash)
 
     return return_hash
 
@@ -230,8 +212,6 @@ def getHeadingsFromPrintArray(merged,pts_get):
     # If pts_is defined, only return headings for that type
     # DEFAULT is to grab all entries
 
-    # myPA = MyPrintArray()
-    # myPAarray = myPA.getMyPrintArray()
     myPAarray = MyPrintArray().getMyPrintArray()
 
     headingsArray = []
@@ -242,7 +222,6 @@ def getHeadingsFromPrintArray(merged,pts_get):
         merged_heading = getPrintArrayValueByHeading(arrayEntryPtr, "merged_header")
         heading        = getPrintArrayValueByHeading(arrayEntryPtr, "wkst_header")
         pts            = getPrintArrayValueByHeading(arrayEntryPtr, "pts")
-        # print('merged=', merged, 'merged_heading=', merged_heading, "heading=", heading)
 
         # when getting summary print headings, only pts == 1 is taken from printArray
         if pts_get:
@@ -254,8 +233,6 @@ def getHeadingsFromPrintArray(merged,pts_get):
                 heading = merged_heading + MERGED_SEPARATOR + heading
 
         db_heading = heading
-        # $db_heading =~ s/\s+//;
-        # $db_heading =~ s/\?//;
 
         headingsArray.append(db_heading)
 
@@ -266,31 +243,18 @@ def getPrintArrayValueByHeading(arrayEntryPtr,heading):
     # when iterating through following call this routine to get the value of the desired header(s);
     #    foreach my $arrayEntryPtr (@printArray) {
 
-    # print("PRINT HEADINGS", return_hash['headings'])
-    # print("heading = ",heading)
-
     myPA = MyPrintArray()
     myRH = myPA.getMyReturnHash()
 
     i = 0
     found = 0
-    # for printHeading in printArray_hash[headings]:
-    # for printHeading in getPrintArray.return_hash[headings]:
     for printHeading in myRH['headings']:
-        # getPrintArray.return_hash
-        # print('heading',heading,'printHeading',printHeading)
         if heading == printHeading:
-            # print("printHeading=",printHeading)
             heading_array_number = i
             found = 1
             break
         i += 1
 
-    # print('i', i)
-    # unless found
-    #     # $logger->error("Heading \"$heading\" Not found in the print Array") unless ($found);
-
-    # print ("arrayEntryPtr=",arrayEntryPtr)
     return(arrayEntryPtr[i])
 
 def CreatePrintHash():
@@ -300,8 +264,6 @@ def CreatePrintHash():
 	# $print_hash stores all key value pairs each rnumber
 
     printhash = {'type':{},'format':{},'cond_format':{},'comment':{},'headers':[],'headers_merged':[],'headers_merged_num':{}}
-    # printhash = {'headers_merged_num':[]}
-    # printhash[merged_headers] = []
 
     myPA = MyPrintArray()
     myPAarray = myPA.getMyPrintArray()
@@ -339,14 +301,6 @@ def CreatePrintHash():
         if my_format is not " ":   printhash['format'][heading]      = my_format
         if cond_format is not " " : printhash['cond_format'][heading] = cond_format
         if comment is not " " :     printhash['comment'][heading]     = comment
-
-		#$hash->{rnumber}->{$heading} = $hash_global['rnums']->{$key}->{$measure_name};
-
-		# ($db_heading = $heading) =~ s/\S+$MERGED_SEPARATOR//
-	# 	$db_heading =~ s/\s+//;
-	# 	$db_heading =~ s/\?//;
-	# }
-    #
 
     return(printhash)
 
