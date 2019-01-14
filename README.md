@@ -6,7 +6,6 @@ getrealty is a python engine I created to scrape data from appraisal district si
 After venturing into real estate, I was interested in grabbing as information about properties and having all of the information presented in one place.  The information is publicly available but requires a person to navigate many links to find all of the data
 
 ## Tech/framework used
-Ex. -
 
 <b>Built with</b>
 - [Python](https://python.org)
@@ -14,4 +13,4 @@ Ex. -
 ## License
 A short snippet describing the license (MIT, Apache etc)
 
-MIT © [Yourname]()
+MIT © Jason Frerich
