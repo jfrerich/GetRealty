@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE pdf2xml SYSTEM "pdf2xml.dtd">
+
+<pdf2xml>
+<page number="1" position="absolute" top="0" left="0" height="918" width="1188">
+	<fontspec id="0" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="1" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="2" size="13" family="Helvetica" color="#000000"/>
+	<fontspec id="3" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="4" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="5" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="6" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="7" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="8" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="9" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="10" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="11" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="12" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="13" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="14" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="15" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="16" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="17" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="18" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="19" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="20" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="21" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="22" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="23" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="24" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="25" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="26" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="27" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="28" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="29" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="30" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="31" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="32" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="33" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="34" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="35" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="36" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="37" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="38" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="39" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="40" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="41" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="42" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="43" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="44" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="45" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="46" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="47" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="48" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="49" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="50" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="51" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="52" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="53" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="54" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="55" size="10" family="Helvetica" color="#000000"/>
+<text top="571" left="36" width="107" height="11" font="3">SPTB Description</text>
+<text top="571" left="232" width="27" height="11" font="0">Area</text>
+<text top="571" left="342" width="39" height="11" font="0">Market</text>
+<text top="571" left="450" width="51" height="11" font="4">Ag Value</text>
+<text top="455" left="571" width="28" height="11" font="0">Type</text>
+<text top="455" left="1005" width="32" height="11" font="0">Value</text>
+<text top="455" left="917" width="45" height="11" font="5">Eff Year</text>
+<text top="455" left="740" width="27" height="11" font="0">Area</text>
+<text top="455" left="610" width="66" height="11" font="0">Description</text>
+<text top="455" left="829" width="56" height="11" font="6">Year Built</text>
+<text top="502" left="486" width="59" height="11" font="0">Bedrooms</text>
+<text top="200" left="725" width="27" height="11" font="0">2013</text>
+<text top="200" left="833" width="27" height="11" font="0">2012</text>
+<text top="200" left="941" width="27" height="11" font="0">2011</text>
+<text top="200" left="1049" width="27" height="11" font="0">2010</text>
+<text top="549" left="249" width="92" height="11" font="7">Land Segments</text>
+<text top="259" left="279" width="32" height="11" font="0">Sales</text>
+<text top="178" left="253" width="83" height="11" font="8">Situs Address</text>
+<text top="198" left="33" width="302" height="11" font="16">371 HIGH VIEW RANCH DR CEDAR CREEK, TX 78612</text>
+<text top="453" left="491" width="48" height="11" font="0">Flooring</text>
+<text top="453" left="410" width="27" height="11" font="0">Roof</text>
+<text top="453" left="315" width="41" height="11" font="0">Interior</text>
+<text top="453" left="225" width="45" height="11" font="0">Exterior</text>
+<text top="453" left="128" width="65" height="11" font="0">Foundation</text>
+<text top="453" left="35" width="75" height="11" font="0">Construction</text>
+<text top="70" left="174" width="87" height="11" font="17">Current Owner</text>
+<text top="70" left="544" width="104" height="11" font="18">Legal Description</text>
+<text top="70" left="844" width="70" height="11" font="0">Exemptions</text>
+<text top="70" left="1048" width="40" height="11" font="0">Market</text>
+<text top="90" left="33" width="269" height="11" font="23">SIFUENTES, EDUARDO &amp; LAURA M (O0104166)</text>
+<text top="104" left="33" width="154" height="11" font="12">375 HIGH VIEW RANCH DR</text>
+<text top="118" left="33" width="133" height="11" font="25">CEDAR PARK,TX 78612</text>
+<text top="90" left="411" width="350" height="11" font="34">HIGH VIEW RANCH SUBDIVISION, PHASE 2, BLOCK H, LOT 5,</text>
+<text top="104" left="408" width="81" height="11" font="35">ACRES 2.2470</text>
+<text top="124" left="857" width="45" height="11" font="0">Entities</text>
+<text top="144" left="790" width="119" height="11" font="38">ESD1, G01, RD1, S04</text>
+<text top="90" left="976" width="7" height="11" font="1">0</text>
+<text top="124" left="1039" width="58" height="11" font="0">Assessed</text>
+<text top="144" left="976" width="7" height="11" font="1">0</text>
+<text top="177" left="805" width="114" height="11" font="39">History Information</text>
+<text top="435" left="239" width="111" height="11" font="40">Building Attributes</text>
+<text top="435" left="820" width="85" height="11" font="0">Improvements</text>
+<text top="231" left="574" width="41" height="11" font="41">Imp HS</text>
+<text top="250" left="574" width="50" height="11" font="42">Imp NHS</text>
+<text top="269" left="574" width="49" height="11" font="43">Land HS</text>
+<text top="289" left="574" width="57" height="11" font="44">Land NHS</text>
+<text top="308" left="574" width="40" height="11" font="45">Ag Mkt</text>
+<text top="326" left="574" width="41" height="11" font="46">Ag Use</text>
+<text top="345" left="574" width="45" height="11" font="47">Tim Mkt</text>
+<text top="364" left="574" width="47" height="11" font="48">Tim Use</text>
+<text top="383" left="574" width="43" height="11" font="49">HS Cap</text>
+<text top="231" left="725" width="13" height="11" font="1">$0</text>
+<text top="403" left="574" width="56" height="11" font="0">Assessed</text>
+<text top="250" left="725" width="37" height="11" font="1">$8,000</text>
+<text top="265" left="725" width="13" height="11" font="1">$0</text>
+<text top="288" left="725" width="43" height="11" font="1">$30,930</text>
+<text top="306" left="725" width="13" height="11" font="1">$0</text>
+<text top="325" left="725" width="13" height="11" font="1">$0</text>
+<text top="344" left="725" width="13" height="11" font="1">$0</text>
+<text top="363" left="725" width="13" height="11" font="1">$0</text>
+<text top="382" left="725" width="13" height="11" font="1">$0</text>
+<text top="401" left="725" width="43" height="11" font="1">$38,930</text>
+<text top="231" left="833" width="13" height="11" font="1">$0</text>
+<text top="250" left="833" width="13" height="11" font="1">$0</text>
+<text top="269" left="833" width="13" height="11" font="1">$0</text>
+<text top="288" left="833" width="43" height="11" font="1">$30,930</text>
+<text top="306" left="833" width="13" height="11" font="1">$0</text>
+<text top="325" left="833" width="13" height="11" font="1">$0</text>
+<text top="344" left="833" width="13" height="11" font="1">$0</text>
+<text top="363" left="833" width="13" height="11" font="1">$0</text>
+<text top="382" left="833" width="4" height="11" font="1">-</text>
+<text top="401" left="833" width="43" height="11" font="1">$30,930</text>
+<text top="231" left="941" width="13" height="11" font="1">$0</text>
+<text top="250" left="941" width="13" height="11" font="1">$0</text>
+<text top="269" left="941" width="13" height="11" font="1">$0</text>
+<text top="288" left="941" width="43" height="11" font="1">$30,930</text>
+<text top="306" left="941" width="13" height="11" font="1">$0</text>
+<text top="325" left="941" width="13" height="11" font="1">$0</text>
+<text top="344" left="941" width="13" height="11" font="1">$0</text>
+<text top="363" left="941" width="13" height="11" font="1">$0</text>
+<text top="382" left="941" width="4" height="11" font="1">-</text>
+<text top="401" left="941" width="43" height="11" font="1">$30,930</text>
+<text top="231" left="1049" width="13" height="11" font="1">$0</text>
+<text top="250" left="1049" width="13" height="11" font="1">$0</text>
+<text top="269" left="1049" width="13" height="11" font="1">$0</text>
+<text top="288" left="1049" width="43" height="11" font="1">$30,930</text>
+<text top="306" left="1049" width="13" height="11" font="1">$0</text>
+<text top="325" left="1049" width="13" height="11" font="1">$0</text>
+<text top="344" left="1049" width="13" height="11" font="1">$0</text>
+<text top="363" left="1049" width="13" height="11" font="1">$0</text>
+<text top="382" left="1049" width="4" height="11" font="1">-</text>
+<text top="401" left="1049" width="43" height="11" font="1">$30,930</text>
+<text top="281" left="66" width="26" height="11" font="0">Date</text>
+<text top="281" left="131" width="43" height="11" font="0">Volume</text>
+<text top="281" left="239" width="29" height="11" font="0">Page</text>
+<text top="281" left="347" width="69" height="11" font="50">Seller Name</text>
+<text top="502" left="50" width="47" height="11" font="0">Heat/AC</text>
+<text top="502" left="145" width="33" height="11" font="0">Baths</text>
+<text top="502" left="223" width="53" height="11" font="0">Fireplace</text>
+<text top="502" left="309" width="56" height="11" font="51">Year Built</text>
+<text top="502" left="405" width="41" height="11" font="0">Rooms</text>
+<text top="302" left="354" width="214" height="11" font="55">MATHEWS, G BERNARD &amp; ANGELICA</text>
+<text top="302" left="245" width="20" height="11" font="1">302</text>
+<text top="302" left="138" width="27" height="11" font="1">2177</text>
+<text top="302" left="35" width="60" height="11" font="1">09/14/2012</text>
+<text top="45" left="1045" width="28" height="11" font="1">Page</text>
+<text top="45" left="1100" width="10" height="11" font="1">of</text>
+<text top="45" left="1081" width="7" height="11" font="1">1</text>
+<text top="45" left="1121" width="7" height="11" font="1">1</text>
+<text top="46" left="30" width="53" height="14" font="2">R84783</text>
+<text top="26" left="30" width="33" height="14" font="2">2013</text>
+<text top="26" left="1042" width="75" height="14" font="2">03/22/2014</text>
+</page>
+</pdf2xml>
