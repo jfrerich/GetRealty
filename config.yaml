@@ -1,0 +1,48 @@
+defaults: 
+  MAX_VALUE: 30000
+  MIN_VALUE: 0
+  SUBDIVISION: 'S5070'
+  ACRES_LEAST: 1
+  ACRES_MOST: 3
+  COUNTY: 'Bastrop'
+  RUN_DIR: '.'
+  WORK_DIR: '.'
+  OUTPUT: 'output.python'
+  SEPARATE_WKTS: False
+  NO_QUERY_OVERWRITE_XLS: False
+  UPDATE_DB_FILE: False
+  DB_SEARCH: False
+  SQL_SEARCH: False
+  SQL_WHERE: False
+  RNUMBERS: False
+  FORCE: False
+  UPDATE_DB_FROM_SERVER: False
+  TABLE_NAME: "RNUMBERS_Bastrop"
+  REGRESS: False
+  REGRESS_GET_COLUMNS: False
+
+            # these are values that can be overwritten by the script, but are
+            # not from argparser
+defaults_static: 
+  STATE: 'TX'
+  MIN_IMP_DIFF: 0
+  IMPNHS_VALUE_MIN: 7000
+  PDFTOHTML_SRC: "${HOME}/Downloads/pdftohtml-0.40a/src/pdftohtml"
+  FIRSTTAXYEAR: "2012"
+  LASTTAXYEAR: "2009"
+  INITIAL_PROP_INTEREST: "Not Vetted"
+  PROP_DETAIL_RESULTS: "PROP_DETAIL_RESULTS.html"
+  BILL_PAGE_RESULTS: "BILL_PAGE_RESULTS.html"
+  HISTORY_PAGE_RESULTS: "HISTORY_PAGE_RESULTS.html"
+  DATASHEET_PAGE: "DATASHEET_PAGE.pdf"
+  DATASHEET_PAGE_XML: "DATASHEET_PAGE.xml"
+  HOST_TAX_ACCESSOR: "http://www.bastroptac.com"
+  HOST_TAX_ACCESSOR_ADVANCED: "http://www.bastroptac.com"
+  HOST_TAX_ACCESSOR_WWW: "www.bastroptac.com"
+  HOST_TAX_ACCESSOR_WWW_ADVANCED: "www.bastroptac.com"
+  GIS_WWW: "http://gis.bisconsultants.com/bastropcad/?slayer=0&exprnum=0&esearch="
+  RNUM_NOTES_SHEET:   "RnumNotesAndContacts"
+  SUMMARY_SHEET:      "Summary"
+  SUMMARY_SHEET_DB:   "Summary_db"
+  SUMMARY_SHEET_DIFF: "Summary_diff"
+  MERGED_SEPARATOR: "___"
