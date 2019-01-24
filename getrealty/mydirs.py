@@ -10,33 +10,40 @@ config = getrealty.settings.config
 
 logger = logging.getLogger(__name__)
 
+
 class MyDirs(object):
 
-    """Docstring for MyClass. """
+    """Class for creating necessary directories for each rnumber and retrieving
+    dirs and files"""
 
     def __init__(self):
 
-        DEFAULT_RUN_DIR = '.'
-
         # print("jason", config['defaults']['WORK_DIR'])
         if config['defaults']['WORK_DIR'] == './':
-            self.CACHE_DIR = os.path.abspath(DEFAULT_RUN_DIR + "/cache")
-            self.ADVANCED_SEARCH_DIR = os.path.abspath(DEFAULT_RUN_DIR + "/searches")
-            self.EXCEL_DIR = os.path.abspath(DEFAULT_RUN_DIR + "/excel")
-            self.LOG_DIR = os.path.abspath(DEFAULT_RUN_DIR + "/cache")
-        else :
-            self.CACHE_DIR = os.path.abspath(DEFAULT_RUN_DIR + "/cache/" + config['defaults']['COUNTY'])
-            self.ADVANCED_SEARCH_DIR = os.path.abspath(DEFAULT_RUN_DIR + "/searches/" + config['defaults']['COUNTY'])
-            self.EXCEL_DIR = os.path.abspath(DEFAULT_RUN_DIR + "/excel/" + config['defaults']['COUNTY'])
-            self.LOG_DIR = os.path.abspath(DEFAULT_RUN_DIR + "/cache/" + config['defaults']['COUNTY'])
+            self.cache_dir = self._getabspath("/cache")
+            self.advanced_search_dir = self._getabspath("/searches")
+            self.excel_dir = self._getabspath("/excel")
+            self.log_dir = self._getabspath("/cache")
+        else:
+            self.cache_dir = \
+                self._getabspath("/cache/" + config['defaults']['COUNTY'])
+            self.advanced_search_dir = \
+                self._getabspath("/searches/" + config['defaults']['COUNTY'])
+            self.excel_dir = \
+                self._getabspath("/excel/" + config['defaults']['COUNTY'])
+            self.log_dir = \
+                self._getabspath("/cache/" + config['defaults']['COUNTY'])
 
+    def _getabspath(self, local_path):
 
-        # if config.DATE or (args.rnumbers and args.rnumbers is "ALL"):
-        #     config.DEFAULT_OUPUT = "."
+        default_run_dir = '.'
+
+        path = os.path.abspath(default_run_dir + local_path)
+        return(path)
 
     def buildmydirs(self):
 
-        for dir in (self.CACHE_DIR, self.ADVANCED_SEARCH_DIR, self.EXCEL_DIR):
+        for dir in (self.cache_dir, self.advanced_search_dir, self.excel_dir):
             print('dir = ', dir)
             try:
                 os.makedirs(dir, exist_ok=True)
@@ -45,23 +52,20 @@ class MyDirs(object):
                 exit()
 
     def cachedir(self):
-        # print(self.CACHE_DIR)
-        return(self.CACHE_DIR)
+        return(self.cache_dir)
 
     def exceldir(self):
-        # print(self.EXCEL_DIR)
-        return(self.EXCEL_DIR)
+        return(self.excel_dir)
 
     def logdir(self):
-        # print(self.LOG_DIR)
-        return(self.LOG_DIR)
+        return(self.log_dir)
 
     def advanced_search_file(self, my_file):
-        # print(self.ADVANCED_SEARCH_DIR)
-        ADVANCED_SEARCH_RESPONSE_FILE = self.ADVANCED_SEARCH_DIR + "/" + config['defaults']['OUTPUT'] + my_file
-        return(ADVANCED_SEARCH_RESPONSE_FILE)
+        advanced_search_response_file = self.advanced_search_dir \
+            + "/" + config['defaults']['OUTPUT'] + my_file
+        return(advanced_search_response_file)
 
     def prop_id_search_file(self, my_file):
-        # print(self.ADVANCED_SEARCH_DIR)
-        PROP_ID_SEARCH_RESPONSE_FILE = self.ADVANCED_SEARCH_DIR + "/" + config['defaults']['OUTPUT'] + my_file
-        return(PROP_ID_SEARCH_RESPONSE_FILE)
+        prop_id_search_response_file = self.advanced_search_dir \
+            + "/" + config['defaults']['OUTPUT'] + my_file
+        return(prop_id_search_response_file)
