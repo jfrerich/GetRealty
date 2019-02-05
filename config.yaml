@@ -6,7 +6,8 @@ defaults:
   ACRES_MOST: 3
   COUNTY: 'Bastrop'
   RUN_DIR: '.'
-  WORK_DIR: '.'
+  # WORK_DIR: '.'
+  WORK_DIR: 'tests'
   OUTPUT: 'output.python'
   SEPARATE_WKTS: False
   NO_QUERY_OVERWRITE_XLS: False

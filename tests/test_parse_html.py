@@ -1,8 +1,12 @@
-from getrealty import settings, webdata, createAdditionalInfo
+from getrealty import settings, webdata
 import pytest
+import os
 
 config = settings.config
 hash_global = settings.hash_global
+
+myPath = os.path.dirname(os.path.abspath(__file__))
+print('myPath', myPath)
 
 
 @pytest.mark.parametrize("rnum, expected", [
@@ -11,9 +15,10 @@ hash_global = settings.hash_global
     ('R84783', (1, '2012/09/14')),
 ])
 def test_enhance_readDatasheet(rnum, expected):
+    base_dir = myPath + '/test_files/test_enhance_readDatasheet/' + rnum + '/'
     pdf = 'DATASHEET_PAGE.pdf'
     xml = 'DATASHEET_PAGE.xml'
-    test_file = 'test_files/test_enhance_readDatasheet/' + rnum + '/' + xml
+    test_file = os.path.join(base_dir, xml)
     hash_global['DBWriteValues'].update({rnum: {pdf: {}}})
     webdata.readRnumDataSheetPageResponseData(rnum, pdf, test_file)
     assert (hash_global['DBWriteValues'][rnum][pdf]['NumTimesSold']
@@ -27,7 +32,8 @@ def test_getDetailMainEntries():
     html = 'PROP_DETAIL_RESULTS.html'
 
     rnum = 'R49589'
-    test_file = 'test_files/test_getDetailMainEntries/' + html
+    myPath = os.path.dirname(os.path.abspath(__file__))
+    test_file = myPath + '/test_files/test_getDetailMainEntries/' + html
 
     # hash_global['DBWriteValues'].update({rnum: {pdf: {}}})
     hash_global['DBWriteValues'].update({'R49589': {html: {}}})
@@ -57,7 +63,7 @@ def test_bug9():
                                          {html: {}}})
     readRnumBillsPageResponseData('R23357',
                                   html,
-                                  'test_files/test_bug9/' + html)
+                                  myPath + '/test_files/test_bug9/' + html)
     assert createDaysLate('R23357',
                           'calcs',
                           'BILL_PAGE_RESULTS.html') == (2484, 10000,
@@ -99,6 +105,6 @@ def test_propAddrSameAsOwnerAddr(rnum, test_file, expected):
     #  - calculating pct address diff cannot have ( or ) or / in the address
     #  tests Different___State
     html = 'PROP_DETAIL_RESULTS.html'
-    test_file = 'test_files/' + test_file + '/' + html
+    test_file = myPath + '/test_files/' + test_file + '/' + html
     webdata.readRnumDetailPageResponseData(rnum, html, test_file)
     assert propAddrSameAsOwnerAddr(rnum, html) == expected

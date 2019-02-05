@@ -10,7 +10,7 @@ def test_fail_duplicate_rnumbers(caplog):
 
     config['defaults']['RNUMBERS'] = "M95907 R72216 R72216 R38491"
 
-    getrealty.checkDuplicateRnumbers()
+    GetRealty.checkDuplicateRnumbers()
 
     for record in caplog.records:
 

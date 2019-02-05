@@ -3,15 +3,7 @@ import os
 import pprint
 import re
 
-# import GetRealty
 import getrealty
-# import getrealty.createAdditionalInfo
-# import getrealty.mydirs
-# import getrealty.settings
-# import getrealty.sqlConnect
-# import getrealty.webdata
-# import getrealty.writeexcel
-
 
 pp = pprint.PrettyPrinter(width=1)
 logger = logging.getLogger(__name__)
@@ -23,26 +15,22 @@ config = getrealty.settings.config
 
 
 def GetRealty():
+    ''' Previous to this routine:
+          args have been parsed from command line / gui
+          Defaults read from config.yaml file
 
-    # import pdb; pdb.set_trace()  # XXX BREAKPOINT
 
-    print("fix the slow page read time that uses BeautifulSoup")
-    print("xlsx file is not writing all the columns.  Look \
-          at Reduced and appraised columns")
-    # previous to this routine:
-    #   args have been parsed from command line / gui
-    #   Defaults read from config.yaml file
-
-    # the main program
-    # calls to build build sqlite db, create tables, update and modify table
-    #   columns
-    # determine properties in the caches
-    # determine properties in the sqlite db
-    # determine properies that meet query needs
-    # Make calls to web servers to retrieve data
-    # parse data
-    # calculate additional info for each rnumber
-    # write the output to XLSX file
+        The main program
+            - calls to build sqlite db, create tables, update
+              and modify table columns
+            - determine properties in the caches
+            - determine properties in the sqlite db
+            - determine properies that meet query needs
+            - Make calls to web servers to retrieve data
+            - parse data
+            - calculate additional info for each rnumber
+            - write the output to XLSX file
+    '''
 
     getrealty.mydirs.MyDirs().buildmydirs()
 
@@ -93,6 +81,8 @@ def buildCacheDict():
 
 
 def saveRegressionData():
+    '''function for use with -regress option.  Uses home made integration test
+    suite '''
 
     fh_regress = open('test.regress', "w")
 
@@ -109,10 +99,12 @@ def saveRegressionData():
 
 def writeDbWithCacheOrServerData(rnumbers, rnumPropIDArray):
 
-    # check if rnumbers are in the cache
-    # build the hash_global['rnums'] dict
-    # hash_global['rnums'] contians 'omit' key. determines if rnumber data gets
-    # pulled from the server
+    ''' check if rnumbers are in the cache
+        build the hash_global['rnums'] dict
+        hash_global['rnums'] contians 'omit' key. determines if rnumber
+        data gets pulled from the server
+    '''
+
     checkIfRnumbersInCache(rnumbers)
     count = 1
     carriage_return = 1
@@ -124,7 +116,6 @@ def writeDbWithCacheOrServerData(rnumbers, rnumPropIDArray):
         # from getting added to the database base on the omit function, skip it
         if 'omit' in hash_global['rnums'][rnumber]:
             continue
-        # next PROP if (($hash_global['rnums']->{$rnumber}->{omit}));
 
         # create cache r number dir if doesn't exist
         cache_dir = getrealty.mydirs.MyDirs().cachedir()
@@ -167,22 +158,6 @@ def writeDbWithCacheOrServerData(rnumbers, rnumPropIDArray):
                 config['defaults_static']['DATASHEET_PAGE'])
 
             print("good_hist", good_hist)
-#
-# 				unless ($good_detail && $good_bills && $good_hist && $good_data) {
-#
-# 					$logger->error("ERROR: good_detail=$good_detail
-#                   && good_bills=$good_bills && good_hist=$good_hist
-#                   && good_data=$good_data");
-#
-# 					$hash_bad_props->{$rnumber}->{good_detail} = $good_detail
-#                      if ($good_detail eq 0);
-# 					$hash_bad_props->{$rnumber}->{good_bills}  = $good_bills
-#                      if ($good_bills  eq 0);;
-# 					$hash_bad_props->{$rnumber}->{good_hist}   = $good_hist
-#                      if ($good_hist   eq 0);;
-# 					$hash_bad_props->{$rnumber}->{good_data}   = $good_data
-#                      if ($good_data   eq 0);;
-# 					next PROP;
 
             # Create additional calculations, to add to the database. These are
             # values that have been found useful to the user, but not available
@@ -194,22 +169,15 @@ def writeDbWithCacheOrServerData(rnumbers, rnumPropIDArray):
             # entry in the database
             writeOrUpdateDb(rnumber)  # Write the DB
 
-# 			if ($carriage_return eq 18) {
-# 				$carriage_return = 0;
-# 				#print "\n";
-# 			}
-# 			$count++;
-# 			$pr .= "\($count/$numPropsNotOmmitted\)  ";
-# 			$logger->info($pr);
-# 			$carriage_return++;
-
 
 def getDataFromServers(rnumber, my_property):
 
-    # get data pages from the server if cached entry doesn't exist or
-    # -update_db_from_server
-    # will still omit rnumbers that fall out of requested criteria (min / max
-    # values)
+    ''' get data pages from the server if cached entry doesn't exist or
+        -update_db_from_server
+        will still omit rnumbers that fall out of requested criteria (min / max
+        values)
+    '''
+
     do_update = 0
     if config['defaults']['UPDATE_DB_FROM_SERVER'] is True:
         do_update = 1
@@ -217,8 +185,8 @@ def getDataFromServers(rnumber, my_property):
     if (do_update == 1 or hash_global['rnums'][rnumber]
             [config['defaults_static']['HISTORY_PAGE_RESULTS']] == 0):
         getrealty.webdata.getPost("History", my_property,
-                            config['defaults_static']
-                            ['HISTORY_PAGE_RESULTS'])
+                                  config['defaults_static']
+                                  ['HISTORY_PAGE_RESULTS'])
 
     if (do_update == 1 or hash_global['rnums'][rnumber]
             [config['defaults_static']['PROP_DETAIL_RESULTS']] == 0):
@@ -269,9 +237,8 @@ def getRnumbers():
 
 
 def checkIfRnumbersInCache(rnumbers):
-
-    # in this routine, we care about getting the list of rnumbers
-    # print(globals())
+    ''' in this routine, we care about getting the list of rnumbers
+    '''
     num_queries = 0
     numPropsNotOmmitted = 1
     num_queries = 1
@@ -288,7 +255,6 @@ def checkIfRnumbersInCache(rnumbers):
     getRequestPages = getRequestPagesArray()
 
     # determine properties to omit based on min / max value and -f option
-    # setup $hash_global['rnums']->{$rnumber}->{omit} value = 1 if omitted
     for rnumber in rnumbers:
 
         num_queries = determineCacheEntriesHash(
@@ -309,12 +275,11 @@ def checkIfRnumbersInCache(rnumbers):
 
 
 def checkIfRnumbersInDb(rnumbers):
-
-    # for all the rnumbers that we are going to collect, check if the value is
-    # rnumber exists in the database
-    #
-    # builds hash_global['cache']['db'][rnumber] dict
-    #   Values are 1 or 0 for every rnumber
+    ''' for all the rnumbers that we are going to collect, check if the value
+            is rnumber exists in the database
+        builds hash_global['cache']['db'][rnumber] dict Values are 1 or 0 for
+            every rnumber
+    '''
     for RNUM in rnumbers:
 
         # initialize as 0 = npt in the db
@@ -346,24 +311,6 @@ def questionUserIfWantToSubmit(
         logger.info(
             "Do you want submit %s to the continue? [y/n] ",
             num_queries)
-#
-# 		while (<STDIN>) {
-# 			my $response = $_;
-# 			chomp ($response);
-#
-# 			if ($response eq 'y') {
-# 				$logger->info("Submitting to server ... ");
-# 				last;
-# 			}
-# 			elsif ($response eq 'n') {
-# 				$logger->info("Aborting... ");
-# 				exit;
-# 			}
-# 			else {
-# 				$logger->warn("response \"$response\" is not valid ..");
-# 				$logger->warn("Do you want submit $num_queries to the continue? [y/n] ");
-# 				next;
-
 
 def getRnumsMeetingCriteria(num_rnumbers, rnumbers):
 
@@ -454,18 +401,13 @@ def determineCacheEntriesHash(rnumber, num_queries, pages):
 
 
 def writeOrUpdateDb(rnumber):
-
-        # write the data to the database..
-
-        # my $hash; # shorted for readability
-
-        # store the values for the rnubmer in a hash
+    ''' write the data to the database..
+        store the values for the rnubmer in a hash
+    '''
 
     update = ""
     logger.info("write or update %s to the database", rnumber)
 
-    # my_hash['rnumber']['wkst_headers'][wkst_header] = #
-    # hash_global['DBWriteValues'][rnumber][key][measure_name]
     my_hash = {'rnumber': {'wkst_headers': {}, 'merged_headers': {}}}
 
     myPAarray = getrealty.printArray.MyPrintArray().getMyPrintArray()
@@ -476,7 +418,8 @@ def writeOrUpdateDb(rnumber):
             "merged_header")
         wkst_header = getrealty.printArray.getPrintArrayValueByHeading(
             arrayEntryPtr, "wkst_header")
-        key = getrealty.printArray.getPrintArrayValueByHeading(arrayEntryPtr, "key")
+        key = getrealty.printArray.getPrintArrayValueByHeading(arrayEntryPtr,
+                                                               "key")
         measure_name = getrealty.printArray.getPrintArrayValueByHeading(
             arrayEntryPtr,
             "measure_name")
@@ -491,12 +434,6 @@ def writeOrUpdateDb(rnumber):
 
         my_hash['rnumber']['wkst_headers'].update(
             {wkst_header: hpr_measure_name})
-        # my_hash['rnumber']['wkst_headers'][hpr_measure_name].update({key:""})
-
-        # make sure have key and measure name in hash
-        # if key in hash_global['DBWriteValues'][rnumber]:
-        #     if measure_name in hash_global['DBWriteValues'][rnumber][key]:
-        #         my_hash['rnumber']['wkst_headers'].update({wkst_header:hash_global['DBWriteValues'][rnumber][key][measure_name]})
 
         my_hash['rnumber']['merged_headers'].update(
             {wkst_header: merged_header})
@@ -506,7 +443,6 @@ def writeOrUpdateDb(rnumber):
     prepare_values = []
 
     prepare_values.append(rnumber)
-    # logger.info(hash_global)
 
     # get the values for the rnumbers
     for wkst_header, value in my_hash['rnumber']['wkst_headers'].items():
@@ -535,24 +471,7 @@ def writeOrUpdateDb(rnumber):
                 continue
             update = update + wkst_header_merged + '=\"' + str(value) + '\",'
 
-#       if ($UPDATE_DB_FROM_SERVER || $UPDATE_DB_FROM_CACHE) {
-#
-#           # determine if supposed to update the db for this heading
-#           # defined in printArray
-#           my $do_update = getSecondValueFromHeadingValueCombo("wkst_header",
-#                           $wkst_header, "do_update");
-#           next unless $do_update eq "Yes";
-#           $update .= "$wkst_header_merged=\"$value\",";
-#
-#       }
-#  		else {
-#  			push (@prepare_headings, $wkst_header_merged);
-#  			push (@prepare_values, $value);
-
-        # if (($UPDATE_DB_FROM_SERVER || $UPDATE_DB_FROM_CACHE)
-        # && $hash_global->{db}->{$rnumber} eq 1) {
-        #
-        # If Not in database, always need to insert Rnumber into the database
+    # If Not in database, always need to insert Rnumber into the database
     # if rnumber not in hash_global['db'] :
     if hash_global['db'][rnumber] == 0:
 
@@ -580,10 +499,6 @@ def writeOrUpdateDb(rnumber):
 
         getrealty.sqlConnect.sqlInsertRequest(sql_prepare, prepare_values)
 
-        # my $sth = $dbh->prepare($sql_prepare) or die
-        # "Couldn't execute statement $rnumber: $DBI::errstr;";
-        # $sth->execute(@prepare_values) or
-        # die "Couldn't execute statement $rnumber: $DBI::errstr;";
     elif config['defaults']['UPDATE_DB_FROM_SERVER'] is True or config['defaults']['UPDATE_DB_FROM_CACHE'] is True:
 
         # get rid of the last comma
@@ -602,7 +517,6 @@ def writeOrUpdateDb(rnumber):
     else:
         pass
         # $logger->error("ERROR I DON't KNOW WHAT TO DO!!");
-        # $logger->error("");
 
 
 def getRequestPagesArray():
