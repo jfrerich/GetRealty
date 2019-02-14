@@ -4,6 +4,7 @@ import pprint
 import re
 
 import getrealty
+from getrealty import printArray
 
 pp = pprint.PrettyPrinter(width=1)
 logger = logging.getLogger(__name__)
@@ -98,7 +99,6 @@ def saveRegressionData():
 
 
 def writeDbWithCacheOrServerData(rnumbers, rnumPropIDArray):
-
     ''' check if rnumbers are in the cache
         build the hash_global['rnums'] dict
         hash_global['rnums'] contians 'omit' key. determines if rnumber
@@ -171,7 +171,6 @@ def writeDbWithCacheOrServerData(rnumbers, rnumPropIDArray):
 
 
 def getDataFromServers(rnumber, my_property):
-
     ''' get data pages from the server if cached entry doesn't exist or
         -update_db_from_server
         will still omit rnumbers that fall out of requested criteria (min / max
@@ -312,6 +311,7 @@ def questionUserIfWantToSubmit(
             "Do you want submit %s to the continue? [y/n] ",
             num_queries)
 
+
 def getRnumsMeetingCriteria(num_rnumbers, rnumbers):
 
     numPropsNotOmmitted = 0
@@ -410,17 +410,17 @@ def writeOrUpdateDb(rnumber):
 
     my_hash = {'rnumber': {'wkst_headers': {}, 'merged_headers': {}}}
 
-    myPAarray = getrealty.printArray.MyPrintArray().getMyPrintArray()
-    for arrayEntryPtr in myPAarray:
+    myPA = printArray.MyPrintArray()
+    for arrayEntryPtr in myPA.getMyPrintArray:
 
-        merged_header = getrealty.printArray.getPrintArrayValueByHeading(
+        merged_header = myPA.getPrintArrayValueByHeading(
             arrayEntryPtr,
             "merged_header")
-        wkst_header = getrealty.printArray.getPrintArrayValueByHeading(
+        wkst_header = myPA.getPrintArrayValueByHeading(
             arrayEntryPtr, "wkst_header")
-        key = getrealty.printArray.getPrintArrayValueByHeading(arrayEntryPtr,
-                                                               "key")
-        measure_name = getrealty.printArray.getPrintArrayValueByHeading(
+        key = myPA.getPrintArrayValueByHeading(arrayEntryPtr,
+                                               "key")
+        measure_name = myPA.getPrintArrayValueByHeading(
             arrayEntryPtr,
             "measure_name")
 
@@ -462,10 +462,8 @@ def writeOrUpdateDb(rnumber):
         if config['defaults']['UPDATE_DB_FROM_SERVER'] is True or config['defaults']['UPDATE_DB_FROM_CACHE'] is True:
             # determine if supposed to update the db for this heading
             # defined in printArray
-            do_update = getrealty.printArray.getSecondValueFromHeadingValueCombo(
-                "wkst_header",
-                wkst_header,
-                "do_update")
+            do_update = myPA.getSecondValueFromHeadingValueCombo(
+                "wkst_header", wkst_header, "do_update")
 
             if do_update != "Yes":
                 continue
@@ -480,7 +478,7 @@ def writeOrUpdateDb(rnumber):
         # this is the first time a property is written to the db
 
         prepare_headings = ",".join(prepare_headings)
-        myPAarray = getrealty.printArray.MyPrintArray().getMyPrintArray()
+        myPAarray = myPA.getMyPrintArray()
         num_columns = len(myPAarray) + 1
 
         # construct the insert statement

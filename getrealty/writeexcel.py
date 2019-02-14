@@ -4,6 +4,7 @@ import re
 from collections import deque
 
 import getrealty
+from getrealty import printArray
 import openpyxl
 import xlsxwriter
 
@@ -70,7 +71,8 @@ def writeExcel(rnumbers):
 
 def writeWorkBook(workbook, num_rnumbers, rnumbers_only):
 
-    printhash = getrealty.printArray.CreatePrintHash()
+    myPA = printArray.MyPrintArray()
+    printhash = myPA.CreatePrintHash()
 
     worksheet = workbook.add_worksheet("Summary")
     worksheet_db = workbook.add_worksheet("Summary_db")
@@ -92,7 +94,7 @@ def writeWorkBook(workbook, num_rnumbers, rnumbers_only):
 
     # Write the headings
     # get non-merged headers
-    (row, col) = writeNonMergedHeaders(workbook, worksheet, worksheet_db,
+    (row, col) = writeNonMergedHeaders(myPA, workbook, worksheet, worksheet_db,
                                        row, col, printhash)
     # exit()
 
@@ -114,7 +116,7 @@ def writeWorkBook(workbook, num_rnumbers, rnumbers_only):
     #                                              $num_rnumbers,
     #                                              $printhash,@vals);
     else:
-        (row, col) = writeRnumberRows(workbook, worksheet, worksheet_db,
+        (row, col) = writeRnumberRows(myPA, workbook, worksheet, worksheet_db,
                                       row, col, printhash, rnumbers_only)
         # ($row_rnum_sheet,$col_rnum_sheet) = writeRnumberSheet($workbook,
         #                                                       $worksheet_rnum,
@@ -127,7 +129,7 @@ def writeWorkBook(workbook, num_rnumbers, rnumbers_only):
     worksheet.freeze_panes(2, 3)  # Freeze row, col
     worksheet_db.freeze_panes(2, 3)  # Freeze row, col
 
-    headingsArray = getrealty.printArray.getHeadingsFromPrintArray(1, 1)
+    headingsArray = myPA.getHeadingsFromPrintArray(1, 1)
     num_headers = len(headingsArray)
 
     # VERY IMPORTANT -- If you dont auto filter on all the columns, the sort
@@ -159,7 +161,7 @@ def my_autofit_columns(worksheet):
     worksheet.column_dimensions[column].width = adjusted_width
 
 
-def writeRnumberRows(workbook, worksheet, worksheet_db, row, col,
+def writeRnumberRows(myPA, workbook, worksheet, worksheet_db, row, col,
                      printhash, rnumbers_only):
 
     # get the desired Rnumbers from the database
@@ -213,7 +215,7 @@ def writeRnumberRows(workbook, worksheet, worksheet_db, row, col,
     # print(hash_values['rnum_values'])
     # get the columns to print.  column order is from printArray
     headingsArray = ['r_num'] + \
-        getrealty.printArray.getHeadingsFromPrintArray(1, 1)
+        myPA.getHeadingsFromPrintArray(1, 1)
 
     # pp.pprint(hash_values['rnumbers'])
     # pp.pprint(hash_values['rnum_values'])
@@ -458,16 +460,16 @@ def writeMergedHeaders(workbook, worksheet, worksheet_db, row, col, printhash):
     return(row, col)
 
 
-def writeNonMergedHeaders(workbook, worksheet,
+def writeNonMergedHeaders(myPA, workbook, worksheet,
                           worksheet_db, row, col, printhash):
     """Write non-merged headers to Excel file"""
 
     # get the columns to print.  column order is from printArray
     # prepend "r_num" to array
     headingsMergedArray = ["r_num"] + \
-        getrealty.printArray.getHeadingsFromPrintArray(1, 1)
+        myPA.getHeadingsFromPrintArray(1, 1)
     headingsNotMergedArray = ["r_num"] + \
-        getrealty.printArray.getHeadingsFromPrintArray(0, 1)
+        myPA.getHeadingsFromPrintArray(0, 1)
 
     # print("\n", headingsNotMergedArray)
 
@@ -494,7 +496,7 @@ def writeNonMergedHeaders(workbook, worksheet,
         comment = None
         if heading is not "r_num":
             comment = \
-                getrealty.printArray.getSecondValueFromHeadingValueCombo(
+                myPA.getSecondValueFromHeadingValueCombo(
                     "wkst_header", headingNotMerged, "comment")
 
         # write comments
