@@ -410,8 +410,8 @@ def writeOrUpdateDb(rnumber):
 
     my_hash = {'rnumber': {'wkst_headers': {}, 'merged_headers': {}}}
 
-    myPA = printArray.MyPrintArray()
-    for arrayEntryPtr in myPA.getMyPrintArray:
+    myPA = printArray.PrintArray()
+    for arrayEntryPtr in myPA.getPrintArray:
 
         merged_header = myPA.getPrintArrayValueByHeading(
             arrayEntryPtr,
@@ -478,7 +478,7 @@ def writeOrUpdateDb(rnumber):
         # this is the first time a property is written to the db
 
         prepare_headings = ",".join(prepare_headings)
-        myPAarray = myPA.getMyPrintArray()
+        myPAarray = myPA.getPrintArray()
         num_columns = len(myPAarray) + 1
 
         # construct the insert statement

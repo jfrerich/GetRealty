@@ -28,6 +28,8 @@ class MyPrintArray(object):
     """
 
     def __init__(self):
+        '''set the printArrayHeadings - This is the list of headings
+        set the printArray'''
 
         # self.printArrayHeadings = (
         #     "pts", "do_update", "db_type",  "comment")
@@ -60,10 +62,7 @@ class MyPrintArray(object):
             "db_type",
             "comment")
         self.printArray = [
-            [2, "No", "", "NOTES_rnum_sheet", k_calc,
-                "", undef, undef, undef, "", ""],
-            # 2,    "No",         "",                    "CONTS_rnum_sheet",  $k_calc, "",                     undef,          undef,        undef,    "",                                                                                                 ],
-            # [ 0,    "Yes",        "",                   "unique_key",        $k_calc, "UniqueKey",            undef,         undef,        undef,    "",                                                                                            ],
+            [2, "No", "", "NOTES_rnum_sheet", k_calc, "", undef, undef, undef, "", ""],
             [0, "Yes", "", "County", k_calc, "County", undef, undef, undef, "", " "],
             [1, "Yes", "", "rpg", k_calc, "", undef, "format1or0", undef, "", "Does the Rnumber have additional Notes (Rnumber tab)"],
             [1, "No", "", "Property_Interest", k_calc, "PropInterest", undef, undef, undef, "", " "],
@@ -140,16 +139,12 @@ class MyPrintArray(object):
             [1, "Yes", "", "OwnerAddr", k_det, "Owner Address", undef, undef, undef, "", " "],
             [1, "Yes", "", "OwnerName", k_det, "Owner Name", undef, undef, undef, "", " "],
             [1, "Yes", "", "LegalDesc", k_det, "Legal Description", undef, undef, undef, "", " "],
-
-            # [1, "Yes", "Prop_Details", "Interest", $k_det, "Undivided Interest", undef, undef, undef, "",],
-            # [1, "Yes", "", "MinDaysLate", $k_calc, "min_days_late", undef, undef, undef, "",                                                                                                 ],
-            # [1, "Yes", "", "Utilities", $k_calc, "utilities", undef, undef, undef, "",                                                                                                 ],
         ]
 
-    def getMyPrintArray(self):
+    def getPrintArray(self):
         return(self.printArray)
 
-    def getMyReturnHash(self):
+    def getReturnHash(self):
         return(self.storePrintArray())
 
     def storePrintArray(self):
@@ -168,14 +163,12 @@ class MyPrintArray(object):
             cnt += 1
         return_hash['headings'] = self.printArrayHeadings
 
-        # print(return_hash)
         return return_hash
 
     def CreatePrintHash(self):
-
-        # this routine stores all of the print information to the excel worksheet.
-        # @header stores the headers and order of the headers.
-        # $print_hash stores all key value pairs each rnumber
+        '''this routine stores all of the print information excel and SQL
+        @header stores the headers and order of the headers.
+        print_hash stores all key value pairs each rnumber'''
 
         printhash = {
             'type': {},
@@ -187,64 +180,85 @@ class MyPrintArray(object):
             'headers_merged_num': {}}
 
         myPA = MyPrintArray()
-        myPAarray = myPA.getMyPrintArray()
+        myPAarray = myPA.getPrintArray()
 
         for arrayEntryPtr in myPAarray:
             pts = self.getPrintArrayValueByHeading(arrayEntryPtr, "pts")
-            merged_heading = self.getPrintArrayValueByHeading(arrayEntryPtr,
-                                                              "merged_header")
-            heading = self.getPrintArrayValueByHeading(
-                arrayEntryPtr, "wkst_header")
-            my_type = self.getPrintArrayValueByHeading(arrayEntryPtr, "type")
-            my_format = self.getPrintArrayValueByHeading(
-                arrayEntryPtr, "format")
-            cond_format = self.getPrintArrayValueByHeading(
-                arrayEntryPtr, "condF")
-            comment = self.getPrintArrayValueByHeading(
-                arrayEntryPtr, "comment")
 
             # if not a summary entry, don't add, otw, headers get shifted
             if (pts is not 1):
                 continue
 
-            if (merged_heading is ""):
-                printhash['headers_merged'].append("")
-            else:
-                if merged_heading not in printhash['headers_merged_num']:
-                    printhash['headers_merged_num'].update({merged_heading: 1})
-                    printhash['headers_merged'].append(merged_heading)
-                else:
-                    old_merged_heading = printhash['headers_merged_num'][
-                        merged_heading]
-                    new_merged_heading_val = old_merged_heading + 1
-                    printhash['headers_merged_num'].update(
-                        {merged_heading: new_merged_heading_val})
+            heading = self.getPrintArrayValueByHeading(
+                arrayEntryPtr, "wkst_header")
+            heading = self.getHeadersMerged(arrayEntryPtr, heading, printhash)
 
-                heading = "{}{}{}".format(
-                    merged_heading,
-                    config['defaults_static']['MERGED_SEPARATOR'],
-                    heading)
-            printhash['headers'].append(heading)
-
-            # get type of input, formatting, conditional formatting, and
-            # comment
-            if my_type is not " ":
-                printhash['type'].update({heading: my_type})
-            if my_format is not " ":
-                printhash['format'][heading] = my_format
-            if cond_format is not " ":
-                printhash['cond_format'][heading] = cond_format
-            if comment is not " ":
-                printhash['comment'][heading] = comment
+            self.getType(arrayEntryPtr, heading, printhash)
+            self.getFormat(arrayEntryPtr, heading, printhash)
+            self.getCondFormat(arrayEntryPtr, heading, printhash)
+            self.getComment(arrayEntryPtr, heading, printhash)
 
         return(printhash)
 
+
+    def getHeadersMerged(self, arrayEntryPtr, heading, printhash):
+        merged_heading = self.getPrintArrayValueByHeading(arrayEntryPtr,
+                                                            "merged_header")
+        if (merged_heading is ""):
+            printhash['headers_merged'].append("")
+        else:
+            if merged_heading not in printhash['headers_merged_num']:
+                printhash['headers_merged_num'].update({merged_heading: 1})
+                printhash['headers_merged'].append(merged_heading)
+            else:
+                old_merged_heading = printhash['headers_merged_num'][
+                    merged_heading]
+                new_merged_heading_val = old_merged_heading + 1
+                printhash['headers_merged_num'].update(
+                    {merged_heading: new_merged_heading_val})
+
+            heading = "{}{}{}".format(
+                merged_heading,
+                config['defaults_static']['MERGED_SEPARATOR'],
+                heading)
+        printhash['headers'].append(heading)
+        return heading
+
+
+    def getType(self, arrayEntryPtr, heading, printhash):
+        '''Get Type value for given heading in given arrayptr'''
+        my_type = self.getPrintArrayValueByHeading(arrayEntryPtr, "type")
+        if my_type is not " ":
+            printhash['type'].update({heading: my_type})
+
+
+    def getFormat(self, arrayEntryPtr, heading, printhash):
+        '''Get format value for given heading in given arrayptr'''
+        my_format = self.getPrintArrayValueByHeading(
+            arrayEntryPtr, "format")
+        if my_format is not " ":
+            printhash['format'][heading] = my_format
+
+
+    def getCondFormat(self, arrayEntryPtr, heading, printhash):
+        '''Get conditional format value for given heading in given arrayptr'''
+        cond_format = self.getPrintArrayValueByHeading(
+            arrayEntryPtr, "condF")
+        if cond_format is not " ":
+            printhash['cond_format'][heading] = cond_format
+
+
+    def getComment(self, arrayEntryPtr, heading, printhash):
+        '''Get comment format value for given heading in given arrayptr'''
+        comment = self.getPrintArrayValueByHeading( arrayEntryPtr, "comment")
+        if comment is not " ":
+            printhash['comment'][heading] = comment
+
+
     def getPrintArrayValueByHeading(self, arrayEntryPtr, heading):
+        '''return heading value from given arrayEntryPtr'''
 
-        # when iterating through following call this routine to get the value
-        # of the desired header(s);
-
-        myRH = self.getMyReturnHash()
+        myRH = self.getReturnHash()
 
         i = 0
         found = 0
@@ -267,7 +281,7 @@ class MyPrintArray(object):
         DEFAULT is to grab all entries
         '''
 
-        myPAarray = self.getMyPrintArray()
+        myPAarray = self.getPrintArray()
 
         headingsArray = []
         MERGED_SEPARATOR = config['defaults_static']['MERGED_SEPARATOR']
@@ -298,19 +312,20 @@ class MyPrintArray(object):
 
     def getSecondValueFromHeadingValueCombo(self, heading,
                                             heading_name, heading2):
+        '''
+        this routine is an API to return the value of a second heading, given
+        a heading and value.
 
-        # heading = heading to search
-        # heading_name = heading to find in heading column
-        # heading2 = name of heading to find value
+        heading = heading to search
+        heading_name = heading to find in heading column
+        heading2 = name of heading to find value
 
-        # this routine is an API to return the value of a second heading, given
-        # a heading and value.
-        #
-        # Ex. for wkst_header,NOTES combo, find value of do_update for that
-        #     same row of data.
+        Ex. for wkst_header,NOTES combo, find value of do_update for that
+            same row of data.
+        '''
 
         # myPA = MyPrintArray()
-        myRH = self.getMyReturnHash()
+        myRH = self.getReturnHash()
 
         # get the array entry number in print array data
         array_number = self.getPrintArrayHashByValue(heading, heading_name)
@@ -325,7 +340,7 @@ class MyPrintArray(object):
         represents the anonymous hash matching the heading and heading name
         value.  '''
 
-        myRH = self.getMyReturnHash()
+        myRH = self.getReturnHash()
 
         # print(myRH)
 

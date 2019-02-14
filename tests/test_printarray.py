@@ -10,8 +10,8 @@ myPath = os.path.dirname(os.path.abspath(__file__))
 print('myPath', myPath)
 
 myPA = printArray.MyPrintArray()
-myPAarray = myPA.getMyPrintArray()
-myRH = myPA.getMyReturnHash()
+myPAarray = myPA.getPrintArray()
+myRH = myPA.getReturnHash()
 
 
 def test_getSecondValueFromHeadingValueCombo():

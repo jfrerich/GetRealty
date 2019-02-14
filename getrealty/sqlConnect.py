@@ -8,6 +8,7 @@ import getrealty
 pp = pprint.PrettyPrinter(width=1)
 logger = logging.getLogger(__name__)
 config = getrealty.settings.config
+myPA = getrealty.printArray.MyPrintArray()
 
 
 class DB(object):
@@ -273,7 +274,17 @@ def buildTableIfDoesntExist():
     # call to determine if it existed first. In here, we use "IF NOT EXISTS"
     # sql command to achieve the same
 
-    headingsArray = getrealty.printArray.getHeadingsFromPrintArray(1, 1)
+    query = buildTableIfDoesntExistQuery()
+
+    sqlSendSimpleRequest(query)
+
+
+def buildTableIfDoesntExistQuery():
+    # create the table if it doesn't exist.  In perl, this was done with an sql
+    # call to determine if it existed first. In here, we use "IF NOT EXISTS"
+    # sql command to achieve the same
+
+    headingsArray = myPA.getHeadingsFromPrintArray(1, 1)
 
     table_name = config['defaults']['TABLE_NAME']
 
@@ -281,7 +292,7 @@ def buildTableIfDoesntExist():
     query = 'CREATE TABLE IF NOT EXISTS {} \
         (r_num PRIMARY KEY, '.format(table_name) + query_headings
 
-    sqlSendSimpleRequest(query)
+    return query
 
 
 def sqlQueryOptsTextMatch2(is_not, db_col_name, search_val, array):
