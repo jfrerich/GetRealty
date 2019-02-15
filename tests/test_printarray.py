@@ -1,5 +1,4 @@
 from getrealty import settings, printArray
-# from getrealty.printArray import CreatePrintHash
 # import pytest
 import os
 

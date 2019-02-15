@@ -3,19 +3,18 @@ import re
 import subprocess
 import urllib
 
-import getrealty.settings
-import getrealty.mydirs
+from getrealty import settings, mydirs
 from bs4 import BeautifulSoup
 
 
 logger = logging.getLogger(__name__)
-config = getrealty.settings.config
-hash_global = getrealty.settings.hash_global
+config = settings.config
+hash_global = settings.hash_global
 
 
 def readResponseData(page_type, rnumber, response_file_suffix):
 
-    cache_dir = getrealty.mydirs.MyDirs().cachedir()
+    cache_dir = mydirs.MyDirs().cachedir()
     response_file = cache_dir + '/' + rnumber + '/' + response_file_suffix
     # add rnumber to dict, if it doesn't exist
     if rnumber not in hash_global['DBWriteValues']:
@@ -185,43 +184,6 @@ def getDetailPropIDPropOwnerID(rnumber, hash_key, soup):
 
     hash_short.update({'propertyID': propertyID})
     hash_short.update({'propertyOwnerID': propertyOwnerID})
-    # return(0)
-
-# ####################################
-# sub checkValuesExistInResponseFile {
-#
-# 	my ($response_file, @check_names) = @_;
-#
-# 	my $fh = new FileHandle;
-# 	unless (open ($fh, $response_file)) {
-# 		$logger->error("ERROR: cannot open the file '$response_file': $!");
-# 	}
-#
-# 	my $tmp_hash;
-#
-# 	while (my $line = <$fh>) {
-#
-# 		my $looparray = 0;
-#
-# 		foreach my $name (@check_names) {
-# 			$looparray++;
-# 			if ($line =~ /$name/) {
-# 				$tmp_hash->{$looparray} = 1;
-# 			}
-# 		}
-# 	}
-# 	close $fh;
-#
-# 	my $num_keys = keys %{$tmp_hash};
-# 	my $num_checks = $#check_names + 1;
-#
-# 	if ($num_keys eq $num_checks) {
-# 		return(1);
-# 	}
-# 	else {
-# 		return(0);
-# 	}
-# }
 
 
 def getDetailMainEntries(rnumber, hash_key, response_file):
@@ -276,19 +238,9 @@ def getDetailMainEntries(rnumber, hash_key, response_file):
 
     pusharray_to_hash2(rnumber, hash_key, tmp_array)
 
-    # used to find the correct table
-    # cnt = 0
-    # for table in tables:
-    #     print("\n\ncnt =", cnt, table)
-    #     cnt += 1
-
-    # print(table.prettify())
-
     pusharray_to_hash(rnumber, hash_key, owner_array)
     pusharray_to_hash(rnumber, hash_key, parcel_array)
-    # pusharray_to_hash(rnumber, hash_key, values_bd_array)
 
-    # pp.pprint(values_bd_array)
 
 
 def getRnumbersFromAdvSearchOrRnumberInput():
@@ -307,7 +259,7 @@ def getRnumbersFromAdvSearchOrRnumberInput():
 
         # ADVANCED_SEARCH_RESPONSE_FILE = MyDirs().advanced_search_file()
         ADVANCED_SEARCH_RESPONSE_FILE = \
-            getrealty.mydirs.MyDirs().advanced_search_file(".SEARCH_RESULTS.html")
+            mydirs.MyDirs().advanced_search_file(".SEARCH_RESULTS.html")
         response_file = ADVANCED_SEARCH_RESPONSE_FILE
         properties = getRnumbersFromAdvancedSearchResponse(
             "",
@@ -347,7 +299,7 @@ def getRnumbersFromAdvSearchOrRnumberInput():
                 getPropIDSearchResult(RNUM)
 
                 response_file = \
-                    (getrealty.mydirs.MyDirs()
+                    (mydirs.MyDirs()
                      .advanced_search_file(".RNUMBER_SEARCH_RESULTS.html"))
                 properties = \
                     getRnumbersFromAdvancedSearchResponse(RNUM,
@@ -399,7 +351,7 @@ def getPropIDSearchResult(RNUM):
     the_page = response.read().decode()
     print(the_page)
 
-    PROP_ID_SEARCH_RESPONSE_FILE_UNZIPPED = lib.mydirs.MyDirs(
+    PROP_ID_SEARCH_RESPONSE_FILE_UNZIPPED = mydirs.MyDirs(
     ).advanced_search_file(".RNUMBER_SEARCH_RESULTS.html")
     fh = open(PROP_ID_SEARCH_RESPONSE_FILE_UNZIPPED, "w")
     fh.write(the_page)
@@ -540,7 +492,7 @@ def altElement2(a):
 
 def getPost(page_type, my_property, response_file_suffix):
 
-    cache_dir = lib.mydirs.MyDirs().cachedir()
+    cache_dir = mydirs.MyDirs().cachedir()
     rnumber = my_property[0]
     PropertyOwnerID = my_property[1]
     PropertyID = my_property[2]
@@ -823,7 +775,7 @@ def getAdvancedSearchPageResponse():
     the_page = response.read().decode()
 
     ADVANCED_SEARCH_RESPONSE_FILE = \
-        lib.mydirs.MyDirs().advanced_search_file(".SEARCH_RESULTS.html")
+        mydirs.MyDirs().advanced_search_file(".SEARCH_RESULTS.html")
     # print(ADVANCED_SEARCH_RESPONSE_FILE)
 
     fh = open(ADVANCED_SEARCH_RESPONSE_FILE, "w")
@@ -862,7 +814,7 @@ def getPropIDAndPropOwnerIDFromCachDetails(RNUM):
 
     print(RNUM, "found in cache")
 
-    cache_dir = lib.mydirs.MyDirs().cachedir()
+    cache_dir = mydirs.MyDirs().cachedir()
     response_file = (
         "/".join([cache_dir,
                   RNUM,

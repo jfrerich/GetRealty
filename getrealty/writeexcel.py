@@ -3,14 +3,13 @@ import pprint
 import re
 from collections import deque
 
-import getrealty
-from getrealty import printArray
+from getrealty import printArray, sqlConnect, settings, mydirs
 import openpyxl
 import xlsxwriter
 
 pp = pprint.PrettyPrinter(width=1)
 logger = logging.getLogger(__name__)
-config = getrealty.settings.config
+config = settings.config
 
 
 def writeExcel(rnumbers):
@@ -34,7 +33,7 @@ def writeExcel(rnumbers):
     logger.info("Writing %s Rnumbers", num_rnum_arrays)
 
     i = 0
-    excel_dir = getrealty.mydirs.MyDirs().exceldir()
+    excel_dir = mydirs.MyDirs().exceldir()
     def_output = config['defaults']['OUTPUT']
     # writefile = config.default_outputxls
     writefile = excel_dir + '/' + def_output + ".xlsx"
@@ -182,11 +181,11 @@ def writeRnumberRows(myPA, workbook, worksheet, worksheet_db, row, col,
     work_dir = config['defaults']['WORK_DIR']
     sql_file = work_dir + '/RealEstate.db'
 
-    table_values = getrealty.sqlConnect.sqlQueryRequest(sql_where)
+    table_values = sqlConnect.sqlQueryRequest(sql_where)
 
     # get all the headings from the db
     sql_query = 'PRAGMA table_info( {} )'.format(table_name)
-    sql_results = getrealty.sqlConnect.sqlQueryRequest(sql_query)
+    sql_results = sqlConnect.sqlQueryRequest(sql_query)
 
     db_headings = [tup[1] for tup in sql_results]
 

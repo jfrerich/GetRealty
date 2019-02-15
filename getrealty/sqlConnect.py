@@ -4,11 +4,12 @@ import re
 import sqlite3
 
 import getrealty
+from getrealty import sqlConnect, settings, printArray
 
 pp = pprint.PrettyPrinter(width=1)
 logger = logging.getLogger(__name__)
-config = getrealty.settings.config
-myPA = getrealty.printArray.MyPrintArray()
+config = settings.config
+myPA = printArray.MyPrintArray()
 
 
 class DB(object):
@@ -226,7 +227,7 @@ def getSearchSqlDbWhereCommand(columns):
 
 def sqlSendSimpleRequest(command):
 
-    db = getrealty.sqlConnect.DB()
+    db = sqlConnect.DB()
     db.execute(command)
     db.commit()
     db.close()
@@ -240,7 +241,7 @@ def sqlSendSimpleRequest(command):
 
 def sqlInsertRequest(command, prepare_values):
 
-    db = getrealty.sqlConnect.DB()
+    db = sqlConnect.DB()
     db.execute(command, prepare_values)
     db.commit()
     db.close()
@@ -258,7 +259,7 @@ def sqlQueryRequest(command):
     # second "prepare_values", used for INSERT when define a prepare statement
     # and then send the values as the second argument
 
-    db = getrealty.sqlConnect.DB()
+    db = sqlConnect.DB()
     db.connect()
     db.execute(command)
 
@@ -321,7 +322,7 @@ def UpdateDBColumns():
     # this routine reads the printArray and creates any new columns
     # don't exist in the TABLE.  It does it on the fly so that printArray
     # can be updated without sql commands failing to find columnns
-    AllHeadings = getrealty.printArray.getHeadingsFromPrintArray(1, 0)
+    AllHeadings = printArray.getHeadingsFromPrintArray(1, 0)
 
     table_name = config['defaults']['TABLE_NAME']
 
